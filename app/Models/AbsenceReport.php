@@ -7,5 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class AbsenceReport extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'absence_report';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'club_session_id',
+        'student_id',
+        'reason',
+        'status',
+    ];
 }

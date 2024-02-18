@@ -7,5 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'comments';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'club_session_id',
+        'student_id',
+        'comment_text',
+        'rating'
+    ];
 }

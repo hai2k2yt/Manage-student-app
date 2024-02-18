@@ -7,5 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'attendances';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'club_session_id',
+        'student_id',
+        'present'
+    ];
 }

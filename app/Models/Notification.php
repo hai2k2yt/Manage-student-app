@@ -7,5 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'notifications';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'sender_id',
+        'receiver_id',
+        'notification_type',
+        'title',
+        'message'
+    ];
 }

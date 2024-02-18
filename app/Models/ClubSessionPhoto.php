@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClubSessionPhoto extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'club_session_photos';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'session_id',
+        'photo_url'
+    ];
 }

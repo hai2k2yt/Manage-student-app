@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends BaseModel
 {
-    use HasFactory;
+    protected $table = 'students';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'class_id'
+    ];
 }
