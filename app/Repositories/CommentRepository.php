@@ -2,10 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Models\Comment;
+
 class CommentRepository extends BaseRepository
 {
-    protected function getModel()
+    protected array $sortFields = [
+        'rating'
+    ];
+    protected array $filterFields = [
+        'rating'
+    ];
+
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return Comment::class;
     }
 }

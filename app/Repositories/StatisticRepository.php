@@ -2,11 +2,15 @@
 
 namespace App\Repositories;
 
+use App\Models\Statistic;
+
 class StatisticRepository extends BaseRepository
 {
+    protected array $sortFields = [];
+    protected array $filterFields = [];
 
-    protected function getModel()
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return Statistic::class;
     }
 }

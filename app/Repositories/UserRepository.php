@@ -3,10 +3,23 @@
 namespace App\Repositories;
 
 
+use App\Models\User;
+
 class UserRepository extends BaseRepository
 {
-    protected function getModel()
+    protected array $sortFields = [
+        'name',
+        'email'
+    ];
+    protected array $filterFields = [
+        'name',
+        'name_like',
+        'email',
+        'email_like'
+    ];
+
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return User::class;
     }
 }

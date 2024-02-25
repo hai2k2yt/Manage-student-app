@@ -2,11 +2,22 @@
 
 namespace App\Repositories;
 
+use App\Models\ClubSession;
+use Illuminate\Database\Eloquent\Model;
+
 class ClubSessionRepository extends BaseRepository
 {
+    protected array $sortFields = [
+        'date'
+    ];
+    protected array $filterFields = [
+        'date',
+        'date_gte',
+        'date_lte'
+    ];
 
-    protected function getModel()
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return ClubSession::class;
     }
 }

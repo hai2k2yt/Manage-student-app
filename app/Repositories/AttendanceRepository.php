@@ -4,9 +4,11 @@ namespace App\Repositories;
 
 class AttendanceRepository extends BaseRepository
 {
+    protected array $sortFields = [];
+    protected array $filterFields = [];
 
-    protected function getModel()
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return AttendanceRepository::class;
     }
 }

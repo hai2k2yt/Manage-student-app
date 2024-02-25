@@ -2,10 +2,15 @@
 
 namespace App\Repositories;
 
+use App\Models\ClubSchedule;
+
 class ClubScheduleRepository extends BaseRepository
 {
-    protected function getModel()
+    protected array $sortFields = [];
+    protected array $filterFields = [];
+
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return ClubSchedule::class;
     }
 }

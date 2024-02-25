@@ -2,11 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Models\ClubSession;
+use App\Models\ClubSessionPhoto;
+
 class ClubSessionPhotoRepository extends BaseRepository
 {
+    protected array $sortFields = [
+        'created_at'
+    ];
 
-    protected function getModel()
+    protected array $filterFields = [];
+
+    protected function getModel(): string
     {
-        // TODO: Implement getModel() method.
+        return ClubSessionPhoto::class;
     }
 }
