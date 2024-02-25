@@ -17,4 +17,11 @@ class StudentClassRepository extends BaseRepository
     {
         return StudentClass::class;
     }
+
+    public function getStudentClassList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }

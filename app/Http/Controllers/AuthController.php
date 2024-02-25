@@ -19,7 +19,6 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        dd($request);
         $validated = $request->validated();
         $user = User::create(array_merge(
             $validated,
