@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClubController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
@@ -34,17 +35,24 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('student')->group(function () {
-        Route::get('',[StudentController::class, 'index'])->name('index');
+        Route::get('', [StudentController::class, 'index'])->name('index');
         Route::post('', [StudentController::class, 'store'])->name('store');
-        Route::put('/{id?}', [StudentController::class, 'update'])->name('update');
-        Route::delete('/{id?}', [StudentController::class, 'destroy'])->name('destroy');
+        Route::put('/{id}', [StudentController::class, 'update'])->whereUuid('id')->name('update');
+        Route::delete('/{id}', [StudentController::class, 'destroy'])->whereUuid('id')->name('destroy');
     });
 
     Route::prefix('class')->group(function () {
-        Route::get('',[StudentClassController::class, 'index'])->name('index');
+        Route::get('', [StudentClassController::class, 'index'])->name('index');
         Route::post('', [StudentClassController::class, 'store'])->name('store');
         Route::put('/{id?}', [StudentClassController::class, 'update'])->name('update');
         Route::delete('/{id?}', [StudentClassController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('club')->group(function () {
+        Route::get('', [ClubController::class, 'index'])->name('index');
+        Route::post('', [ClubController::class, 'store'])->name('store');
+        Route::put('/{id?}', [ClubController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [ClubController::class, 'destroy'])->name('destroy');
     });
 });
 

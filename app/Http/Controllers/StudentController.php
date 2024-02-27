@@ -65,11 +65,12 @@ class StudentController extends Controller
      * @param UpdateStudentRequest $request
      * @return JsonResponse
      */
-    public function update(string $id, UpdateStudentRequest $request): JsonResponse
+    public function update( string $id, Request $request): JsonResponse
     {
         DB::beginTransaction();
         try {
-            $requestData = $request->validated();
+            $requestData = $request->all();
+            dd($requestData);
             $student = $this->studentRepository->find($id);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentUpdate, Response::HTTP_NOT_FOUND);

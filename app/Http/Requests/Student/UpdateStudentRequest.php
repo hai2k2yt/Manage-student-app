@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Student;
 
+use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateStudentRequest extends FormRequest
 {
+    use ApiFailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,9 +25,18 @@ class UpdateStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|string|max:255',
-            'user_id' => 'nullable|exists:users,id',
-            'class_id' => 'nullable|exists:classes,id'
+            'name' => 'sometimes|required|string|max:255',
+            'user_id' => 'sometimes|nullable|exists:users,id',
+            'class_id' => 'sometimes|nullable|exists:classes,id'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.max' => __('name.max'),
+            'user_id.exists' => __('user_id.not_existed'),
+            'class_id.exists' => __('class_id.not_existed'),
         ];
     }
 }

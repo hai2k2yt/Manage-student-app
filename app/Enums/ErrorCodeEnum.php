@@ -15,4 +15,8 @@ enum ErrorCodeEnum: string
     case StudentClassStore = 'E-010';
     case StudentClassUpdate = 'E-011';
     case StudentClassDelete = 'E-012';
+
+    case ClubStore = 'E-020';
+    case ClubUpdate = 'E-021';
+    case ClubDelete = 'E-022';
 }

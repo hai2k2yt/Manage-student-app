@@ -6,7 +6,7 @@ use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreClubRequest extends FormRequest
+class UpdateClubRequest extends FormRequest
 {
     use ApiFailedValidation;
     /**
@@ -25,18 +25,16 @@ class StoreClubRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'teacher_id' => 'required|exists:users,id'
+            'name' => 'sometimes|nullable|string|max:255',
+            'teacher_id' => 'sometimes|nullable|exists:users,id'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => __('name.required'),
             'name.string' => __('name.must_be_string'),
             'name.max' => __('name.max'),
-            'teacher_id.required' => __('user_id.required'),
             'teacher_id.exists' => __('class_id.not_existed'),
         ];
     }
