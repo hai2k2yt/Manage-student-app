@@ -19,4 +19,8 @@ enum ErrorCodeEnum: string
     case ClubStore = 'E-020';
     case ClubUpdate = 'E-021';
     case ClubDelete = 'E-022';
+
+    case ClubEnrollmentStore = 'E-030';
+    case ClubEnrollmentUpdate = 'E-031';
+    case ClubEnrollmentDelete = 'E-032';
 }

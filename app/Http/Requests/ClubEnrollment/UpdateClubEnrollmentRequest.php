@@ -5,7 +5,7 @@ namespace App\Http\Requests\ClubEnrollment;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreClubEnrollmentRequest extends FormRequest
+class UpdateClubEnrollmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class StoreClubEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'required|exists:students,id',
-            'club_id' => 'required|exists:clubs,id'
+            'student_id' => 'sometimes|required|exists:students,id',
+            'club_id' => 'sometimes|required|exists:clubs,id'
         ];
     }
 
