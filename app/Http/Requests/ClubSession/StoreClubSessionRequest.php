@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\ClubSession;
 
+use App\Traits\ApiFailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClubSessionRequest extends FormRequest
 {
+    use ApiFailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */

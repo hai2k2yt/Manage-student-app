@@ -13,4 +13,11 @@ class ClubScheduleRepository extends BaseRepository
     {
         return ClubSchedule::class;
     }
+
+    public function getClubScheduleList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }
