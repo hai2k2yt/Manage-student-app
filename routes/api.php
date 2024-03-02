@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubEnrollmentController;
 use App\Http\Controllers\ClubScheduleController;
+use App\Http\Controllers\ClubSessionController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
@@ -69,6 +70,13 @@ Route::middleware('api')->group(function () {
         Route::post('', [ClubScheduleController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubScheduleController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubScheduleController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('club-session')->group(function () {
+        Route::get('', [ClubSessionController::class, 'index'])->name('index');
+        Route::post('', [ClubSessionController::class, 'store'])->name('store');
+        Route::put('/{id?}', [ClubSessionController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [ClubSessionController::class, 'destroy'])->name('destroy');
     });
 });
 

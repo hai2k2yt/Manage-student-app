@@ -20,4 +20,11 @@ class ClubSessionRepository extends BaseRepository
     {
         return ClubSession::class;
     }
+
+    public function getClubSessionList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }

@@ -6,7 +6,7 @@ use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreClubSessionRequest extends FormRequest
+class UpdateClubSessionRequest extends FormRequest
 {
     use ApiFailedValidation;
     /**
@@ -25,8 +25,8 @@ class StoreClubSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schedule_id' => 'required|exists:club_schedules,id',
-            'date' => 'required|date',
+            'schedule_id' => 'sometimes|required|exists:club_schedules,id',
+            'date' => 'sometimes|required|date',
         ];
     }
 

@@ -15,7 +15,6 @@ class ClubSession extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'club_id',
         'schedule_id',
         'date'
     ];

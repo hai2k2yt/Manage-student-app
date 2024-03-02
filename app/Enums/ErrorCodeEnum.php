@@ -27,4 +27,8 @@ enum ErrorCodeEnum: string
     case ClubScheduleStore = 'E-040';
     case ClubScheduleUpdate = 'E-041';
     case ClubScheduleDelete = 'E-042';
+
+    case ClubSessionStore = 'E-050';
+    case ClubSessionUpdate = 'E-051';
+    case ClubSessionDelete = 'E-052';
 }
