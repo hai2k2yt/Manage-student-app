@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\Attendance;
+
 class AttendanceRepository extends BaseRepository
 {
     protected array $sortFields = [];
@@ -9,6 +11,13 @@ class AttendanceRepository extends BaseRepository
 
     protected function getModel(): string
     {
-        return AttendanceRepository::class;
+        return Attendance::class;
+    }
+
+    public function getAttendanceList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
     }
 }

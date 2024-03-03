@@ -35,4 +35,8 @@ enum ErrorCodeEnum: string
     case AbsenceReportStore = 'E-060';
     case AbsenceReportUpdate = 'E-061';
     case AbsenceReportDelete = 'E-062';
+
+    case AttendanceStore = 'E-070';
+    case AttendanceUpdate = 'E-071';
+    case AttendanceDelete = 'E-072';
 }

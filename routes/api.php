@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceReportController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubEnrollmentController;
@@ -85,6 +86,13 @@ Route::middleware('api')->group(function () {
         Route::post('', [AbsenceReportController::class, 'store'])->name('store');
         Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
         Route::delete('/{id?}', [AbsenceReportController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('attendance')->group(function () {
+        Route::get('', [AttendanceController::class, 'index'])->name('index');
+        Route::post('', [AttendanceController::class, 'store'])->name('store');
+        Route::put('/{id?}', [AttendanceController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [AttendanceController::class, 'destroy'])->name('destroy');
     });
 });
 
