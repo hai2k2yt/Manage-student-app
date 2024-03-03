@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsenceReportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubEnrollmentController;
@@ -77,6 +78,13 @@ Route::middleware('api')->group(function () {
         Route::post('', [ClubSessionController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubSessionController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubSessionController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('absence-report')->group(function () {
+        Route::get('', [AbsenceReportController::class, 'index'])->name('index');
+        Route::post('', [AbsenceReportController::class, 'store'])->name('store');
+        Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [AbsenceReportController::class, 'destroy'])->name('destroy');
     });
 });
 

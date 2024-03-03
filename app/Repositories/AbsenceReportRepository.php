@@ -13,4 +13,11 @@ class AbsenceReportRepository extends BaseRepository
     {
         return AbsenceReport::class;
     }
+
+    public function getAbsenceReportList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }
