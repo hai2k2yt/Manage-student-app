@@ -17,4 +17,11 @@ class CommentRepository extends BaseRepository
     {
         return Comment::class;
     }
+
+    public function getCommentList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }
