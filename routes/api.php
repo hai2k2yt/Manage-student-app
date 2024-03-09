@@ -7,6 +7,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubEnrollmentController;
 use App\Http\Controllers\ClubScheduleController;
 use App\Http\Controllers\ClubSessionController;
+use App\Http\Controllers\ClubSessionPhotoController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
@@ -93,6 +94,13 @@ Route::middleware('api')->group(function () {
         Route::post('', [AttendanceController::class, 'store'])->name('store');
         Route::put('/{id?}', [AttendanceController::class, 'update'])->name('update');
         Route::delete('/{id?}', [AttendanceController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('club-session-photo')->group(function () {
+        Route::get('', [ClubSessionPhotoController::class, 'index'])->name('index');
+        Route::post('', [ClubSessionPhotoController::class, 'store'])->name('store');
+        Route::put('/{id?}', [ClubSessionPhotoController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [ClubSessionPhotoController::class, 'destroy'])->name('destroy');
     });
 });
 

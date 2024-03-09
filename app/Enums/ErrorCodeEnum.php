@@ -39,4 +39,8 @@ enum ErrorCodeEnum: string
     case AttendanceStore = 'E-070';
     case AttendanceUpdate = 'E-071';
     case AttendanceDelete = 'E-072';
+
+    case ClubSessionPhotoStore = 'E-080';
+    case ClubSessionPhotoUpdate = 'E-081';
+    case ClubSessionPhotoDelete = 'E-082';
 }

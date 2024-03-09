@@ -17,4 +17,11 @@ class ClubSessionPhotoRepository extends BaseRepository
     {
         return ClubSessionPhoto::class;
     }
+
+    public function getClubSessionPhotoList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }
