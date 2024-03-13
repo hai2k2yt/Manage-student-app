@@ -18,10 +18,11 @@ return new class extends Migration
             $table->string('day_of_week');
             $table->time('start_time');
             $table->time('end_time');
+            $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('club_id')->references('id')->on('clubs');
             $table->foreign('teacher_id')->references('id')->on('users');
-            $table->timestamps();
         });
     }
 

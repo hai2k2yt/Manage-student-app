@@ -15,9 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('session_id');
             $table->string('photo_url');
+            $table->timestamps();
 
             $table->foreign('session_id')->references('id')->on('club_sessions');
-            $table->timestamps();
         });
     }
 

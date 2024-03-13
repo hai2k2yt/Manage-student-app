@@ -15,11 +15,11 @@ return new class extends Migration
 
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->uuid('teacher_id');
-
-            $table->foreign('teacher_id')->references('id')->on('users');
-
+            $table->uuid('teacher_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('teacher_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 

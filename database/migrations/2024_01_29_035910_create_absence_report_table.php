@@ -17,11 +17,11 @@ return new class extends Migration
             $table->uuid('student_id');
             $table->string('reason');
             $table->enum('status', ['pending', 'approved', 'rejected']);
+            $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('club_session_id')->references('id')->on('club_sessions');
             $table->foreign('student_id')->references('id')->on('students');
-
-            $table->timestamps();
         });
     }
 

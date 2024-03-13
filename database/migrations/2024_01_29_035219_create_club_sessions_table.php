@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('club_sessions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('club_id');
             $table->uuid('schedule_id');
             $table->date('date');
-
-            $table->foreign('club_id')->references('id')->on('clubs');
-            $table->foreign('schedule_id')->references('id')->on('club_schedules');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('schedule_id')->references('id')->on('club_schedules');
         });
     }
 

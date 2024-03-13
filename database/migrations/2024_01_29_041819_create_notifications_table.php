@@ -18,9 +18,10 @@ return new class extends Migration
             $table->string('notification_type');
             $table->string('title');
             $table->text('message');
+            $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('sender_id')->references('id')->on('users');
-            $table->timestamps();
         });
     }
 
