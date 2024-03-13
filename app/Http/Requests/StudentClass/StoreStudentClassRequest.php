@@ -33,11 +33,11 @@ class StoreStudentClassRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'class_name.required' => __('class_name.required'),
-            'class_name.string' => __('class_name.string'),
-            'class_name.max' => __('class_name.max'),
-            'teacher_id.required' => __('teacher_id.required'),
-            'teacher_id.exists' => __('teacher_id.exists'),
+            'class_name.required' => __('validation.required'),
+            'class_name.string' => __('validation.string'),
+            'class_name.max' => __('validation.max'),
+            'teacher_id.required' => __('validation.required'),
+            'teacher_id.exists' => __('validation.exists'),
         ];
     }
 }

@@ -33,11 +33,11 @@ class StoreClubRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => __('name.required'),
-            'name.string' => __('name.must_be_string'),
-            'name.max' => __('name.max'),
-            'teacher_id.required' => __('user_id.required'),
-            'teacher_id.exists' => __('class_id.not_existed'),
+            'name.required' => __('validation.required'),
+            'name.string' => __('validation.string'),
+            'name.max' => __('validation.max'),
+            'teacher_id.required' => __('validation.required'),
+            'teacher_id.exists' => __('validation.exists'),
         ];
     }
 }

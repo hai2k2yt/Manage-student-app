@@ -26,15 +26,15 @@ class UpdateCommentRequest extends FormRequest
     {
         return [
             'comment_text' => 'nullable|string',
-            'rating' => 'nullable|numeric'
+            'rating' => 'nullable|integer'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'comment_text.string' => __('comment_text.must_be_string'),
-            'rating.numeric' => __('rating.not_valid')
+            'comment_text.string' => __('validation.string'),
+            'rating.integer' => __('validation.integer')
         ];
     }
 }

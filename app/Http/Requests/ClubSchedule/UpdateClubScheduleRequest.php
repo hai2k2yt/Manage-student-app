@@ -25,29 +25,25 @@ class UpdateClubScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_id' => 'sometimes|required|exists:clubs,id',
-            'teacher_id' => 'sometimes|required|exists:users,id',
-            'day_of_week' => 'sometimes|required|in:1,2,3,4,5,6,7',
-            'start_time' => 'sometimes|required|date_format:H:i|before:end_time',
-            'end_time' => 'sometimes|required|date_format:H:i|after:start_time',
+            'club_id' => 'required|exists:clubs,id',
+            'teacher_id' => 'nullable|exists:users,id',
+            'day_of_week' => 'nullable|in:1,2,3,4,5,6,7',
+            'start_time' => 'nullable|date_format:H:i|before:end_time',
+            'end_time' => 'nullable|date_format:H:i|after:start_time',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'club_id.required' => __('club_id.required'),
-            'club_id.exists' => __('club_id.not_existed'),
-            'teacher_id.required' => __('teacher_id.required'),
-            'teacher_id.exists' => __('teacher_id.not_existed'),
-            'day_of_week.required' => __('day_of_week.required'),
-            'day_of_week.in' => __('day_of_week.not_valid'),
-            'start_time.required' => __('start_time.required'),
-            'start_time.date_format' => __('start_time.wrong_date_format'),
-            'start_time.before' => __('start_time.before_end_time'),
-            'end_time.required' => __('end_time.required'),
-            'end_time.date_format' => __('end_time.wrong_date_format'),
-            'end_time.after' => __('end_time.after_start_time'),
+            'club_id.required' => __('validation.required'),
+            'club_id.exists' => __('validation.exists'),
+            'teacher_id.exists' => __('validation.exists'),
+            'day_of_week.in' => __('validation.in'),
+            'start_time.date_format' => __('validation.date_format'),
+            'start_time.before' => __('validation.before'),
+            'end_time.date_format' => __('validation.date_format'),
+            'end_time.after' => __('validation.after'),
         ];
     }
 }

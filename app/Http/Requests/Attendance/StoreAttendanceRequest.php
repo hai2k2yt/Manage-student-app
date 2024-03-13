@@ -34,12 +34,12 @@ class StoreAttendanceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'club_session_id.required' => __('club_session_id.required'),
-            'club_session_id.exists' => __('club_session_id.not_existed'),
-            'student_id.required' => __('student_id.required'),
-            'student_id.exists' => __('student_id.not_existed'),
-            'present.required' => __('present.required'),
-            'present.boolean' => __('present.wrong_format'),
+            'club_session_id.required' => __('validation.required'),
+            'club_session_id.exists' => __('validation.exists'),
+            'student_id.required' => __('validation.required'),
+            'student_id.exists' => __('validation.exists'),
+            'present.required' => __('validation.required'),
+            'present.boolean' => __('validation.boolean'),
         ];
     }
 }

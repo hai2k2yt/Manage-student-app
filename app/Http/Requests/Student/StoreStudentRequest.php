@@ -34,11 +34,11 @@ class StoreStudentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => __('name.required'),
-            'name.string' => __('name.must_be_string'),
-            'name.max' => __('name.max'),
-            'user_id.exists' => __('user_id.not_existed'),
-            'class_id.exists' => __('class_id.not_existed'),
+            'name.required' => __('validation.required'),
+            'name.string' => __('validation.string'),
+            'name.max' => __('validation.max'),
+            'user_id.exists' => __('validation.exists'),
+            'class_id.exists' => __('validation.exists'),
         ];
     }
 }

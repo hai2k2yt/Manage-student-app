@@ -33,9 +33,9 @@ class UpdateClubRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.string' => __('name.must_be_string'),
-            'name.max' => __('name.max'),
-            'teacher_id.exists' => __('class_id.not_existed'),
+            'name.string' => __('validation.string'),
+            'name.max' => __('validation.max'),
+            'teacher_id.exists' => __('validation.exists'),
         ];
     }
 }

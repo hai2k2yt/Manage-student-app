@@ -25,17 +25,17 @@ class UpdateClubSessionPhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo_url' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'photo_url.required' => __('photo_url.required'),
-            'photo_url.image' => __('photo_url.not_image_format'),
-            'photo_url.mimes' => __('photo_url.mimes_not_support'),
-            'photo_url.max' => __('photo_url.size_too_large'),
+            'photo_url.required' => __('validation.required'),
+            'photo_url.image' => __('validation.image'),
+            'photo_url.mimes' => __('validation.mimes'),
+            'photo_url.max' => __('validation.max'),
         ];
     }
 }

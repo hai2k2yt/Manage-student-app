@@ -33,10 +33,10 @@ class UpdateClubEnrollmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'student_id.required' => __('student_id.required'),
-            'student_id.exists' => __('student_id.not_existed'),
-            'club_id.required' => __('club_id.required'),
-            'club_id.exists' => __('club_id.not_existed'),
+            'student_id.required' => __('validation.required'),
+            'student_id.exists' => __('validation.exists'),
+            'club_id.required' => __('validation.required'),
+            'club_id.exists' => __('validation.exists'),
         ];
     }
 }

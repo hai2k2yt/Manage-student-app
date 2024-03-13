@@ -6,7 +6,7 @@ use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateStudentClassRequest extends FormRequest
+class AssignStudentToClassRequest extends FormRequest
 {
     use ApiFailedValidation;
     /**
@@ -25,17 +25,21 @@ class UpdateStudentClassRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'class_name' => 'nullable|string|max:255',
-            'teacher_id' => 'nullable|exists:users,id'
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'required|exists:students,id',
+            'class_id' => 'required|exists:classes,id'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'class_name.string' => __('validation.string'),
-            'class_name.max' => __('validation.max'),
-            'teacher_id.exists' => __('validation.exists'),
+            'student_ids.required' => __('validation.required'),
+            'student_ids.array' => __('validation.array'),
+            'student_ids.*.required' => __('validation.required'),
+            'student_ids.*.exists' => __('validation.exists'),
+            'class_id.required' => __('validation.required'),
+            'class_id.exists' => __('validation.exists')
         ];
     }
 }

@@ -36,15 +36,15 @@ class UpdateNotificationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'sender_id.required' => __('sender_id.required'),
-            'sender_id.exists' => __('sender_id.not_existed'),
-            'receiver_id.required' => __('receiver_id.required'),
-            'notification_type.required' => __('notification_type.required'),
-            'comment_text.string' => __('comment_text.must_be_string'),
-            'title.required' => __('title.required'),
-            'title.string' => __('title.string'),
-            'message.required' => __('message.required'),
-            'message.string' => __('message.string')
+            'sender_id.required' => __('validation.required'),
+            'sender_id.exists' => __('validation.exists'),
+            'receiver_id.required' => __('validation.required'),
+            'notification_type.required' => __('validation.required'),
+            'comment_text.string' => __('validation.string'),
+            'title.required' => __('validation.required'),
+            'title.string' => __('validation.string'),
+            'message.required' => __('validation.required'),
+            'message.string' => __('validation.string')
         ];
     }
 }

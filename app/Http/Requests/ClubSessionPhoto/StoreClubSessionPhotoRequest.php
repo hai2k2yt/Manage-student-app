@@ -33,12 +33,12 @@ class StoreClubSessionPhotoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'session_id.required' => __('session_id.required'),
-            'session_id.exists' => __('session_id.not_existed'),
-            'photo_url.required' => __('photo_url.required'),
-            'photo_url.image' => __('photo_url.not_image_format'),
-            'photo_url.mimes' => __('photo_url.mimes_not_support'),
-            'photo_url.max' => __('photo_url.size_too_large'),
+            'session_id.required' => __('validation.required'),
+            'session_id.exists' => __('validation.exists'),
+            'photo_url.required' => __('validation.required'),
+            'photo_url.image' => __('validation.image'),
+            'photo_url.mimes' => __('validation.mimes'),
+            'photo_url.max' => __('validation.max'),
         ];
     }
 }

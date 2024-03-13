@@ -33,10 +33,10 @@ class StoreClubSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'schedule_id.required' => __('schedule_id.required'),
-            'schedule_id.exists' => __('schedule_id.not_existed'),
-            'date.required' => __('date.required'),
-            'date.date' => __('date.date'),
+            'schedule_id.required' => __('validation.required'),
+            'schedule_id.exists' => __('validation.exists'),
+            'date.required' => __('validation.required'),
+            'date.date' => __('validation.date'),
         ];
     }
 }

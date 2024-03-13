@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests\Attendance;
 
+use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAttendanceRequest extends FormRequest
 {
+    use ApiFailedValidation;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,8 +33,8 @@ class UpdateAttendanceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'present.required' => __('present.required'),
-            'present.boolean' => __('present.wrong_format'),
+            'present.required' => __('validation.required'),
+            'present.boolean' => __('validation.boolean'),
         ];
     }
 }

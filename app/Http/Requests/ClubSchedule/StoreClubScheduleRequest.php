@@ -36,17 +36,17 @@ class StoreClubScheduleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'club_id.required' => __('club_id.required'),
-            'club_id.exists' => __('club_id.not_existed'),
-            'teacher_id.required' => __('teacher_id.required'),
-            'teacher_id.exists' => __('teacher_id.not_existed'),
-            'day_of_week.required' => __('day_of_week.required'),
-            'day_of_week.in' => __('day_of_week.not_valid'),
-            'start_time.required' => __('start_time.required'),
-            'start_time.date_format' => __('start_time.wrong_date_format'),
-            'end_time.required' => __('end_time.required'),
-            'end_time.date_format' => __('end_time.wrong_date_format'),
-            'end_time.after' => __('end_time.after_start_time'),
+            'club_id.required' => __('validation.required'),
+            'club_id.exists' => __('validation.exists'),
+            'teacher_id.required' => __('validation.required'),
+            'teacher_id.exists' => __('validation.exists'),
+            'day_of_week.required' => __('validation.required'),
+            'day_of_week.in' => __('validation.in'),
+            'start_time.required' => __('validation.required'),
+            'start_time.date_format' => __('validation.date_format'),
+            'end_time.required' => __('validation.required'),
+            'end_time.date_format' => __('validation.date_format'),
+            'end_time.after' => __('validation.after'),
         ];
     }
 }
