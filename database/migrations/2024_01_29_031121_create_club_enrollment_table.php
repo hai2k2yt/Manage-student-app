@@ -15,8 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('student_id');
             $table->uuid('club_id');
+            $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('student_id')->references('id')->on('students')->null;
             $table->foreign('club_id')->references('id')->on('clubs');
 
             $table->timestamps();

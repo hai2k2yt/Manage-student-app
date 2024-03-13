@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('classes', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('class_name');
-
-            $table->uuid('teacher_id');
-            $table->foreign('teacher_id')->references('id')->on('users');
-
+            $table->uuid('teacher_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('teacher_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 
