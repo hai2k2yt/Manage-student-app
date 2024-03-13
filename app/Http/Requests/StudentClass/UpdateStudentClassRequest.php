@@ -29,4 +29,13 @@ class UpdateStudentClassRequest extends FormRequest
             'teacher_id' => 'nullable|exists:users,id'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'class_name.string' => __('class_name.string'),
+            'class_name.max' => __('class_name.max'),
+            'teacher_id.exists' => __('teacher_id.exists'),
+        ];
+    }
 }

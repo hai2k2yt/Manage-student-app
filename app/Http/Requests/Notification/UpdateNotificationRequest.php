@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Notification;
 
+use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateNotificationRequest extends FormRequest
 {
+    use ApiFailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */

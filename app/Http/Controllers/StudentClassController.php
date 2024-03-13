@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Http\Requests\StudentClass\AssignStudentToClassRequest;
 use App\Http\Requests\StudentClass\StoreStudentClassRequest;
 use App\Http\Requests\StudentClass\UpdateStudentClassRequest;
 use App\Http\Resources\StudentClassResource;
@@ -105,5 +106,9 @@ class StudentClassController extends Controller
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::StudentClassDelete);
         }
+    }
+
+    public function assignStudents(AssignStudentToClassRequest $request) {
+
     }
 }

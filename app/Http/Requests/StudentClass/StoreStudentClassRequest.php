@@ -29,4 +29,15 @@ class StoreStudentClassRequest extends FormRequest
             'teacher_id' => 'required|exists:users,id'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'class_name.required' => __('class_name.required'),
+            'class_name.string' => __('class_name.string'),
+            'class_name.max' => __('class_name.max'),
+            'teacher_id.required' => __('teacher_id.required'),
+            'teacher_id.exists' => __('teacher_id.exists'),
+        ];
+    }
 }
