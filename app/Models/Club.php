@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+
 class Club extends BaseModel
 {
     protected $table = 'clubs';
@@ -15,4 +17,8 @@ class Club extends BaseModel
         'name',
         'teacher_id'
     ];
+
+    public function notification(): MorphOne {
+        return $this->morphOne(Notification::class, 'receiver');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Notification extends BaseModel
 {
@@ -21,4 +22,9 @@ class Notification extends BaseModel
         'title',
         'message'
     ];
+
+    public function receiver(): MorphTo
+    {
+        return $this->morphTo(__FUNCTION__, 'notification_type', 'receiver_id');
+    }
 }

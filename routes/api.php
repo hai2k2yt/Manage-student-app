@@ -9,6 +9,7 @@ use App\Http\Controllers\ClubScheduleController;
 use App\Http\Controllers\ClubSessionController;
 use App\Http\Controllers\ClubSessionPhotoController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
@@ -109,6 +110,13 @@ Route::middleware('api')->group(function () {
         Route::post('', [CommentController::class, 'store'])->name('store');
         Route::put('/{id?}', [CommentController::class, 'update'])->name('update');
         Route::delete('/{id?}', [CommentController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('notification')->group(function () {
+        Route::get('', [NotificationController::class, 'index'])->name('index');
+        Route::post('', [NotificationController::class, 'store'])->name('store');
+        Route::put('/{id?}', [NotificationController::class, 'update'])->name('update');
+        Route::delete('/{id?}', [NotificationController::class, 'destroy'])->name('destroy');
     });
 });
 

@@ -18,4 +18,11 @@ class NotificationRepository extends BaseRepository
     {
         return Notification::class;
     }
+
+    public function getNotificationList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
+    }
 }

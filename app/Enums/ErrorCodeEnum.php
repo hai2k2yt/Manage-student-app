@@ -47,4 +47,8 @@ enum ErrorCodeEnum: string
     case CommentStore = 'E-090';
     case CommentUpdate = 'E-091';
     case CommentDelete = 'E-092';
+
+    case NotificationStore = 'E-100';
+    case NotificationUpdate = 'E-101';
+    case NotificationDelete = 'E-102';
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Student extends BaseModel
 {
@@ -19,4 +20,8 @@ class Student extends BaseModel
         'user_id',
         'class_id'
     ];
+
+    public function notification(): MorphOne {
+        return $this->morphOne(Notification::class, 'receiver');
+    }
 }
