@@ -7,7 +7,9 @@ use App\Http\Requests\StudentClass\AssignStudentToClassRequest;
 use App\Http\Requests\StudentClass\StoreStudentClassRequest;
 use App\Http\Requests\StudentClass\UpdateStudentClassRequest;
 use App\Http\Resources\StudentClassResource;
+use App\Models\Student;
 use App\Repositories\StudentClassRepository;
+use App\Repositories\StudentRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,8 +20,13 @@ class StudentClassController extends Controller
 {
     /**
      * @param StudentClassRepository $studentClassRepository
+     * @param StudentRepository $studentRepository
+     *
      */
-    public function __construct(protected StudentClassRepository $studentClassRepository)
+    public function __construct(
+        protected StudentClassRepository $studentClassRepository,
+        protected StudentRepository      $studentRepository
+    )
     {
     }
 
@@ -54,7 +61,7 @@ class StudentClassController extends Controller
             return $this->sendResponse($studentResource, __('common.created'), Response::HTTP_CREATED);
         } catch (Exception $error) {
             DB::rollBack();
-            return $this->sendExceptionError($error, ErrorCodeEnum::StudentClassStore);
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClassStore);
         }
     }
 
@@ -81,7 +88,7 @@ class StudentClassController extends Controller
             return $this->sendResponse($studentClassResource, __('common.updated'));
         } catch (Exception $error) {
             DB::rollBack();
-            return $this->sendExceptionError($error, ErrorCodeEnum::StudentClassUpdate);
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClassUpdate);
         }
     }
 
@@ -97,18 +104,43 @@ class StudentClassController extends Controller
         try {
             $studentClass = $this->studentClassRepository->find($id);
             if (!$studentClass) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentClassDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClassDelete, Response::HTTP_NOT_FOUND);
             }
             $this->studentClassRepository->delete($id);
             DB::commit();
             return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
         } catch (\Exception $error) {
             DB::rollBack();
-            return $this->sendExceptionError($error, ErrorCodeEnum::StudentClassDelete);
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClassDelete);
         }
     }
 
-    public function assignStudents(AssignStudentToClassRequest $request) {
-
+    public function assignStudents(AssignStudentToClassRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $requestData = $request->validated();
+            $student_ids = $requestData->student_ids;
+            $class_id = $requestData->class_id;
+            $response = [
+                "update_success" => [],
+                "not_found" => [],
+            ];
+            foreach ($student_ids as $id) {
+                $student = $this->studentRepository->find($id);
+                if (!$student) {
+                    $response["not_found"][] = $id;
+                    break;
+                }
+                $this->studentRepository->update($id,
+                    array('class_id' => $class_id));
+                $response["update_success"][] = $id;
+            }
+            DB::commit();
+            return $this->sendResponse($response, __('common.updated'));
+        } catch (Exception $error) {
+            DB::rollBack();
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClassAssignStudent);
+        }
     }
 }

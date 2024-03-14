@@ -12,9 +12,10 @@ enum ErrorCodeEnum: string
     case StudentUpdate = 'E-002';
     case StudentDelete = 'E-003';
 
-    case StudentClassStore = 'E-010';
-    case StudentClassUpdate = 'E-011';
-    case StudentClassDelete = 'E-012';
+    case ClassStore = 'E-010';
+    case ClassUpdate = 'E-011';
+    case ClassDelete = 'E-012';
+    case ClassAssignStudent = 'E-013';
 
     case ClubStore = 'E-020';
     case ClubUpdate = 'E-021';

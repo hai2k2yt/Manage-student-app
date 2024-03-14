@@ -54,6 +54,7 @@ Route::middleware('api')->group(function () {
         Route::post('', [StudentClassController::class, 'store'])->name('store');
         Route::put('/{id?}', [StudentClassController::class, 'update'])->name('update');
         Route::delete('/{id?}', [StudentClassController::class, 'destroy'])->name('destroy');
+        Route::post('/assign-students', [StudentClassController::class, 'assignStudents'])->name('assign-students');
     });
 
     Route::prefix('club')->group(function () {
