@@ -22,8 +22,6 @@ return new class extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('class_id')->references('id')->on('classes')->nullOnDelete();
-
-            $table->timestamps();
         });
     }
 

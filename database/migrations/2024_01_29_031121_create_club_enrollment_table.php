@@ -20,8 +20,6 @@ return new class extends Migration
 
             $table->foreign('student_id')->references('id')->on('students')->null;
             $table->foreign('club_id')->references('id')->on('clubs');
-
-            $table->timestamps();
         });
     }
 
