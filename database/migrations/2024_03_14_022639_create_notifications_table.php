@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('sender_id');
-            $table->uuid('receiver_id');
-            $table->string('notification_type');
-            $table->string('title');
-            $table->text('message');
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-
-            $table->foreign('sender_id')->references('id')->on('users');
         });
     }
 
