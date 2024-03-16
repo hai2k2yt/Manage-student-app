@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Enums\RoleEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -30,6 +32,10 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
+            'role' => [
+                'required',
+                Rule::in(RoleEnum::values())
+            ]
         ];
     }
 }
