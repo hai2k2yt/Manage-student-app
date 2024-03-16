@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Http\Requests\ClubEnrollment\AssignStudentToClubRequest;
 use App\Http\Requests\ClubEnrollment\StoreClubEnrollmentRequest;
 use App\Http\Requests\ClubEnrollment\UpdateClubEnrollmentRequest;
 use App\Http\Resources\ClubEnrollmentResource;
 use App\Repositories\ClubEnrollmentRepository;
+use App\Repositories\ClubRepository;
+use App\Repositories\StudentRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +21,11 @@ class ClubEnrollmentController extends Controller
     /**
      * @param ClubEnrollmentRepository $clubEnrollmentRepository
      */
-    public function __construct(protected ClubEnrollmentRepository $clubEnrollmentRepository)
+    public function __construct(
+        protected ClubEnrollmentRepository $clubEnrollmentRepository,
+        protected ClubRepository           $clubRepository,
+        protected StudentRepository        $studentRepository
+    )
     {
     }
 
@@ -104,6 +111,45 @@ class ClubEnrollmentController extends Controller
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClubEnrollmentDelete);
+        }
+    }
+
+    public function assignStudents(AssignStudentToClubRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $requestData = $request->validated();
+            $club_id = $requestData->club_id;
+            $club = $this->clubRepository->find($club_id);
+            if (!$club) {
+                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubEnrollmentAssignStudent, Response::HTTP_NOT_FOUND);
+            }
+            $student_ids = $requestData->student_ids;
+            $response = [
+                'success' => [],
+                'not_found' => [],
+                'existed' => []
+            ];
+
+            foreach ($student_ids as $id) {
+                $student = $this->studentRepository->find($id);
+                if(!$student) {
+                    $response['not_found'][] = $id;
+                    break;
+                }
+                $registered = $this->clubEnrollmentRepository->getByConditions(array('student_id' => $id, 'club_id' => $club_id));
+                if ($registered) {
+                    $this->clubEnrollmentRepository->create(array('student_id' => $id, 'club_id' => $club_id));
+                    $response['success'][] = $id;
+                } else {
+                    $response['existed'][] = $id;
+                }
+            }
+            DB::commit();
+            return $this->sendResponse($response, __('common.updated'));
+        } catch (Exception $error) {
+            DB::rollBack();
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClubEnrollmentAssignStudent);
         }
     }
 }
