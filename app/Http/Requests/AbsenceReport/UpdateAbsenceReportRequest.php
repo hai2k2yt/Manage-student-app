@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\AbsenceReport;
 
+use App\Enums\AbsenceReportEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAbsenceReportRequest extends FormRequest
 {
@@ -15,17 +17,18 @@ class UpdateAbsenceReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reason' => 'sometimes|required|string',
-            'status' => 'sometimes|required|in:1,2,3',
+            'reason' => 'nullable|string',
+            'status' => [
+                'nullable',
+                Rule::in(AbsenceReportEnum::values())
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'reason.required' => __('validation.required'),
             'reason.string' => __('validation.string'),
-            'status.required' => __('validation.required'),
             'status.in' => __('validation.in'),
         ];
     }

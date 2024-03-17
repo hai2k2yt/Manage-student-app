@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\AbsenceReport;
 
+use App\Enums\AbsenceReportEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAbsenceReportRequest extends FormRequest
 {
@@ -28,7 +30,10 @@ class StoreAbsenceReportRequest extends FormRequest
             'club_session_id' => 'required|exists:club_sessions,id',
             'student_id' => 'required|exists:students,id',
             'reason' => 'required|string',
-            'status' => 'required|in:1,2,3',
+            'status' => [
+                'required',
+                Rule::in(AbsenceReportEnum::values())
+            ],
         ];
     }
 

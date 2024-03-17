@@ -18,7 +18,9 @@ class CommentController extends Controller
     /**
      * @param CommentRepository $commentRepository
      */
-    public function __construct(protected CommentRepository $commentRepository)
+    public function __construct(
+        protected CommentRepository $commentRepository
+    )
     {
     }
 
@@ -55,6 +57,11 @@ class CommentController extends Controller
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::CommentStore);
         }
+    }
+
+    public function getByClubSession(string $id) {
+        $comments = $this->commentRepository->getCommentList(['club_session_id' => $id]);
+        return $this->sendPaginationResponse($comments, CommentResource::collection($comments));
     }
 
     /**

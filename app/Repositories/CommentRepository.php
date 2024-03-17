@@ -10,6 +10,8 @@ class CommentRepository extends BaseRepository
         'rating'
     ];
     protected array $filterFields = [
+        'club_session_id',
+        'student_id',
         'rating'
     ];
 

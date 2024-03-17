@@ -130,6 +130,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [CommentController::class, 'all'])->name('all');
         Route::get('', [CommentController::class, 'index'])->name('index');
         Route::post('', [CommentController::class, 'store'])->name('store');
+        Route::get('/club-session/{id}', [CommentController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [CommentController::class, 'update'])->name('update');
         Route::delete('/{id?}', [CommentController::class, 'destroy'])->name('destroy');
     });
