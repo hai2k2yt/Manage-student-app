@@ -24,4 +24,9 @@ class ClubRepository extends BaseRepository
 
         return $this->applyConditions($collection, $conditions);
     }
+
+    public function getClub(string $id)
+    {
+        return $this->find($id, ['students']);
+    }
 }

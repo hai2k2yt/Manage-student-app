@@ -25,7 +25,7 @@ class Student extends BaseModel
 
     public function class(): BelongsTo
     {
-        return $this->belongsTo(StudentClass::class, 'id', 'class_id');
+        return $this->belongsTo(StudentClass::class, 'class_id', 'id');
     }
 
     public function clubs(): BelongsToMany

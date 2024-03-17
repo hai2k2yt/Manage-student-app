@@ -57,6 +57,12 @@ class ClubController extends Controller
         }
     }
 
+    public function show(string $id): JsonResponse
+    {
+        $club = $this->clubRepository->getClub($id);
+        return $this->sendResponse($club);
+    }
+
     /**
      * Update corporation department.
      *
