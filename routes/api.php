@@ -82,6 +82,8 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [ClubScheduleController::class, 'all'])->name('all');
         Route::get('', [ClubScheduleController::class, 'index'])->name('index');
         Route::post('', [ClubScheduleController::class, 'store'])->name('store');
+        Route::get('{id}', [ClubScheduleController::class, 'show'])->name('show');
+        Route::get('/club/{id}', [ClubScheduleController::class, 'getByClub'])->name('getByClub');
         Route::put('/{id?}', [ClubScheduleController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubScheduleController::class, 'destroy'])->name('destroy');
     });
@@ -91,6 +93,7 @@ Route::middleware('api')->group(function () {
         Route::get('', [ClubSessionController::class, 'index'])->name('index');
         Route::post('', [ClubSessionController::class, 'store'])->name('store');
         Route::get('{id}', [ClubSessionController::class, 'show'])->name('show');
+        Route::get('/club/{id}', [ClubSessionController::class, 'getByClub'])->name('getByClub');
         Route::put('/{id?}', [ClubSessionController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubSessionController::class, 'destroy'])->name('destroy');
     });
@@ -99,6 +102,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [AbsenceReportController::class, 'all'])->name('all');
         Route::get('', [AbsenceReportController::class, 'index'])->name('index');
         Route::post('', [AbsenceReportController::class, 'store'])->name('store');
+        Route::get('/club-session/{id}', [AbsenceReportController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
         Route::delete('/{id?}', [AbsenceReportController::class, 'destroy'])->name('destroy');
     });
@@ -107,6 +111,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [AttendanceController::class, 'all'])->name('all');
         Route::get('', [AttendanceController::class, 'index'])->name('index');
         Route::post('', [AttendanceController::class, 'store'])->name('store');
+        Route::get('/club-session/{id}', [AttendanceController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [AttendanceController::class, 'update'])->name('update');
         Route::delete('/{id?}', [AttendanceController::class, 'destroy'])->name('destroy');
     });
@@ -115,6 +120,8 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [ClubSessionPhotoController::class, 'all'])->name('all');
         Route::get('', [ClubSessionPhotoController::class, 'index'])->name('index');
         Route::post('', [ClubSessionPhotoController::class, 'store'])->name('store');
+        Route::get('/club/{id}', [ClubSessionPhotoController::class, 'getByClub'])->name('getByClub');
+        Route::get('/club-session/{id}', [ClubSessionPhotoController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [ClubSessionPhotoController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubSessionPhotoController::class, 'destroy'])->name('destroy');
     });

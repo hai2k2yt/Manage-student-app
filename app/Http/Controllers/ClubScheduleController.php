@@ -57,6 +57,20 @@ class ClubScheduleController extends Controller
         }
     }
 
+    public function show(string $id): JsonResponse
+    {
+        $clubSchedule = $this->clubScheduleRepository->getClubSchedule($id);
+        return $this->sendResponse($clubSchedule);
+    }
+
+    public function getByClub(string $id): JsonResponse
+    {
+        $clubSchedules = $this->clubScheduleRepository->getClubScheduleList(array(
+            'club_id' => $id
+        ));
+        return $this->sendResponse($clubSchedules);
+    }
+
     /**
      * Update corporation department.
      *

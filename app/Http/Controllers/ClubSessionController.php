@@ -57,6 +57,19 @@ class ClubSessionController extends Controller
         }
     }
 
+    public function show(string $id): JsonResponse
+    {
+        $clubSession = $this->clubSessionRepository->getClubSession($id);
+        return $this->sendResponse($clubSession);
+    }
+
+    public function getByClub(string $id): JsonResponse
+    {
+        $clubSessions = $this->clubSessionRepository->getByClubId($id);
+
+        return $this->sendResponse($clubSessions);
+    }
+
     /**
      * Update corporation department.
      *

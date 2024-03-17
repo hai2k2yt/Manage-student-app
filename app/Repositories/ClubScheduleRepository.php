@@ -7,7 +7,7 @@ use App\Models\ClubSchedule;
 class ClubScheduleRepository extends BaseRepository
 {
     protected array $sortFields = [];
-    protected array $filterFields = [];
+    protected array $filterFields = ['club_id', 'teacher_id'];
 
     protected function getModel(): string
     {
@@ -19,5 +19,10 @@ class ClubScheduleRepository extends BaseRepository
         $collection = $this->getCollections();
 
         return $this->applyConditions($collection, $conditions);
+    }
+
+    public function getClubSchedule(string $id)
+    {
+        return $this->find($id);
     }
 }
