@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Club;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,6 @@ class ClubSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Club::factory(5)->create();
     }
 }

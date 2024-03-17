@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ClubSchedule;
 use App\Models\ClubSession;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,8 @@ class ClubSessionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'schedule_id' => ClubSchedule::pluck('id')->random(),
+            'date' => fake()->dateTime(),
         ];
     }
 }

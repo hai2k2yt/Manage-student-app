@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('club_sessions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('schedule_id');
-            $table->date('date');
+            $table->dateTime('date');
             $table->timestamps();
             $table->softDeletes();
 

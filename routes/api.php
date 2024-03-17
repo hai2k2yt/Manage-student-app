@@ -43,6 +43,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('student')->group(function () {
+        Route::get('/all', [StudentController::class, 'all'])->name('all');
         Route::get('', [StudentController::class, 'index'])->name('index');
         Route::post('', [StudentController::class, 'store'])->name('store');
         Route::put('/{id}', [StudentController::class, 'update'])->whereUuid('id')->name('update');
@@ -50,6 +51,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('class')->group(function () {
+        Route::get('/all', [StudentClassController::class, 'all'])->name('all');
         Route::get('', [StudentClassController::class, 'index'])->name('index');
         Route::post('', [StudentClassController::class, 'store'])->name('store');
         Route::put('/{id?}', [StudentClassController::class, 'update'])->name('update');
@@ -58,6 +60,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('club')->group(function () {
+        Route::get('/all', [ClubController::class, 'all'])->name('all');
         Route::get('', [ClubController::class, 'index'])->name('index');
         Route::post('', [ClubController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubController::class, 'update'])->name('update');
@@ -65,6 +68,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('club-enrollment')->group(function () {
+        Route::get('/all', [ClubEnrollmentController::class, 'all'])->name('all');
         Route::get('', [ClubEnrollmentController::class, 'index'])->name('index');
         Route::post('', [ClubEnrollmentController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubEnrollmentController::class, 'update'])->name('update');
@@ -72,6 +76,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('club-schedule')->group(function () {
+        Route::get('/all', [ClubScheduleController::class, 'all'])->name('all');
         Route::get('', [ClubScheduleController::class, 'index'])->name('index');
         Route::post('', [ClubScheduleController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubScheduleController::class, 'update'])->name('update');
@@ -79,6 +84,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('club-session')->group(function () {
+        Route::get('/all', [ClubSessionController::class, 'all'])->name('all');
         Route::get('', [ClubSessionController::class, 'index'])->name('index');
         Route::post('', [ClubSessionController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubSessionController::class, 'update'])->name('update');
@@ -86,6 +92,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('absence-report')->group(function () {
+        Route::get('/all', [AbsenceReportController::class, 'all'])->name('all');
         Route::get('', [AbsenceReportController::class, 'index'])->name('index');
         Route::post('', [AbsenceReportController::class, 'store'])->name('store');
         Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
@@ -93,6 +100,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('attendance')->group(function () {
+        Route::get('/all', [AttendanceController::class, 'all'])->name('all');
         Route::get('', [AttendanceController::class, 'index'])->name('index');
         Route::post('', [AttendanceController::class, 'store'])->name('store');
         Route::put('/{id?}', [AttendanceController::class, 'update'])->name('update');
@@ -100,6 +108,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('club-session-photo')->group(function () {
+        Route::get('/all', [ClubSessionPhotoController::class, 'all'])->name('all');
         Route::get('', [ClubSessionPhotoController::class, 'index'])->name('index');
         Route::post('', [ClubSessionPhotoController::class, 'store'])->name('store');
         Route::put('/{id?}', [ClubSessionPhotoController::class, 'update'])->name('update');
@@ -107,6 +116,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('comment')->group(function () {
+        Route::get('/all', [CommentController::class, 'all'])->name('all');
         Route::get('', [CommentController::class, 'index'])->name('index');
         Route::post('', [CommentController::class, 'store'])->name('store');
         Route::put('/{id?}', [CommentController::class, 'update'])->name('update');
@@ -114,6 +124,7 @@ Route::middleware('api')->group(function () {
     });
 
     Route::prefix('notification')->group(function () {
+        Route::get('/all', [NotificationController::class, 'all'])->name('all');
         Route::get('', [NotificationController::class, 'index'])->name('index');
         Route::post('', [NotificationController::class, 'store'])->name('store');
         Route::put('/{id?}', [NotificationController::class, 'update'])->name('update');
