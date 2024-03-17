@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StudentClass extends BaseModel
 {
@@ -18,4 +19,9 @@ class StudentClass extends BaseModel
         'class_name',
         'teacher_id'
     ];
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class, 'class_id');
+    }
 }

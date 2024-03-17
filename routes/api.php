@@ -46,6 +46,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [StudentController::class, 'all'])->name('all');
         Route::get('', [StudentController::class, 'index'])->name('index');
         Route::post('', [StudentController::class, 'store'])->name('store');
+        Route::get('{id}', [StudentController::class, 'show'])->name('show');
         Route::put('/{id}', [StudentController::class, 'update'])->whereUuid('id')->name('update');
         Route::delete('/{id}', [StudentController::class, 'destroy'])->whereUuid('id')->name('destroy');
     });
@@ -54,6 +55,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [StudentClassController::class, 'all'])->name('all');
         Route::get('', [StudentClassController::class, 'index'])->name('index');
         Route::post('', [StudentClassController::class, 'store'])->name('store');
+        Route::get('{id}', [StudentClassController::class, 'show'])->name('show');
         Route::put('/{id?}', [StudentClassController::class, 'update'])->name('update');
         Route::delete('/{id?}', [StudentClassController::class, 'destroy'])->name('destroy');
         Route::post('/assign-students', [StudentClassController::class, 'assignStudents'])->name('assign-students');
@@ -63,6 +65,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [ClubController::class, 'all'])->name('all');
         Route::get('', [ClubController::class, 'index'])->name('index');
         Route::post('', [ClubController::class, 'store'])->name('store');
+        Route::get('{id}', [ClubController::class, 'show'])->name('show');
         Route::put('/{id?}', [ClubController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubController::class, 'destroy'])->name('destroy');
     });
@@ -87,6 +90,7 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [ClubSessionController::class, 'all'])->name('all');
         Route::get('', [ClubSessionController::class, 'index'])->name('index');
         Route::post('', [ClubSessionController::class, 'store'])->name('store');
+        Route::get('{id}', [ClubSessionController::class, 'show'])->name('show');
         Route::put('/{id?}', [ClubSessionController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubSessionController::class, 'destroy'])->name('destroy');
     });

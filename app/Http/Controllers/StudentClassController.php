@@ -65,6 +65,12 @@ class StudentClassController extends Controller
         }
     }
 
+    public function show(string $id): JsonResponse
+    {
+        $studentClass = $this->studentClassRepository->getStudentClass($id);
+        return $this->sendResponse($studentClass);
+    }
+
     /**
      * Update corporation department.
      *

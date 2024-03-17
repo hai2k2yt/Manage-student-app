@@ -208,9 +208,9 @@ abstract class BaseRepository
      *
      * @return mixed
      */
-    public function find($id): mixed
+    public function find($id, $relations = []): mixed
     {
-        return $this->model->find($id);
+        return $this->model->with($relations)->find($id);
     }
 
     /**

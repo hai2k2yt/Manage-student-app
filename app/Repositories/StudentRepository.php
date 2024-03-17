@@ -23,6 +23,10 @@ class StudentRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions);
+        return $this->applyConditions($collection, $conditions, ['*'], ['clubs', 'class']);
+    }
+
+    public function getStudent(string $id) {
+        return $this->find($id, ['clubs', 'class']);
     }
 }
