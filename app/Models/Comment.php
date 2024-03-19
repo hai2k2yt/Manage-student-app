@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends BaseModel
 {
@@ -20,4 +21,9 @@ class Comment extends BaseModel
         'comment_text',
         'rating'
     ];
+
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(ClubSession::class);
+    }
 }

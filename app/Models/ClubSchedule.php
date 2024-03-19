@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ClubSchedule extends BaseModel
 {
@@ -21,4 +23,12 @@ class ClubSchedule extends BaseModel
         'start_time',
         'end_time'
     ];
+
+    public function club(): BelongsTo {
+        return $this->belongsTo(Club::class);
+    }
+
+    public function clubSchedules(): HasMany {
+        return $this->hasMany(ClubSession::class, 'schedule_id');
+    }
 }

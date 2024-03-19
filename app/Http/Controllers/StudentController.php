@@ -9,10 +9,13 @@ use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Repositories\StudentRepository;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StudentController extends Controller
 {
@@ -23,7 +26,7 @@ class StudentController extends Controller
     {
     }
 
-    public function all(): JsonResponse
+    public function all(Request $request): JsonResponse
     {
         $students = $this->studentRepository->getAll();
         $records = StudentResource::collection($students);
@@ -47,8 +50,12 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
+            if($request->user()->cannot('store', Student::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $requestData = $request->validated();
             $student = $this->studentRepository->create($requestData);
+
             $studentResource = new StudentResource($student);
             DB::commit();
             return $this->sendResponse($studentResource, __('common.created'), Response::HTTP_CREATED);
@@ -75,6 +82,9 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
+            if($request->user()->cannot('update', Student::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $requestData = $request->validated();
             $student = $this->studentRepository->find($id);
             if (!$student) {
@@ -97,10 +107,13 @@ class StudentController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         DB::beginTransaction();
         try {
+            if($request->user()->cannot('destroy', Student::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $student = $this->studentRepository->find($id);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentDelete, Response::HTTP_NOT_FOUND);

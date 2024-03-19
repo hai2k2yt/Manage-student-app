@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClubSessionPhoto extends BaseModel
 {
@@ -18,4 +19,9 @@ class ClubSessionPhoto extends BaseModel
         'session_id',
         'photo_url'
     ];
+
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(ClubSession::class, 'session_id');
+    }
 }
