@@ -10,7 +10,8 @@ class StudentClassRepository extends BaseRepository
         'class_name'
     ];
     protected array $filterFields = [
-        'class_name_like'
+        'class_name_like',
+        'teacher_id'
     ];
 
     protected function getModel(): string

@@ -6,8 +6,14 @@ use App\Models\ClubSchedule;
 
 class ClubScheduleRepository extends BaseRepository
 {
-    protected array $sortFields = [];
-    protected array $filterFields = ['club_id', 'teacher_id'];
+    protected array $sortFields = [
+
+    ];
+    protected array $filterFields = [
+        'club_id',
+        'teacher_id',
+        'day_of_week'
+    ];
 
     protected function getModel(): string
     {

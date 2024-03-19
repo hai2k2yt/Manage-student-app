@@ -11,9 +11,12 @@ use App\Models\ClubEnrollment;
 class ClubEnrollmentRepository extends BaseRepository
 {
     protected array $sortFields = [
+
     ];
 
     protected array $filterFields = [
+        'student_id',
+        'club_id'
     ];
 
     /**

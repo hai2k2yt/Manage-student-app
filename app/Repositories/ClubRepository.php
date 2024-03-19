@@ -10,7 +10,8 @@ class ClubRepository extends BaseRepository
         'name'
     ];
     protected array $filterFields = [
-        'name_like'
+        'name_like',
+        'teacher_id'
     ];
 
     protected function getModel(): string

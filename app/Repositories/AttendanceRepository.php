@@ -6,8 +6,15 @@ use App\Models\Attendance;
 
 class AttendanceRepository extends BaseRepository
 {
-    protected array $sortFields = [];
-    protected array $filterFields = [];
+    protected array $sortFields = [
+        'present'
+    ];
+
+    protected array $filterFields = [
+        'club_session_id',
+        'student_id',
+        'present'
+    ];
 
     protected function getModel(): string
     {

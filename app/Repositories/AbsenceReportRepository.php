@@ -6,8 +6,15 @@ use App\Models\AbsenceReport;
 
 class AbsenceReportRepository extends BaseRepository
 {
-    protected array $sortFields = [];
-    protected array $filterFields = [];
+    protected array $sortFields = [
+        'status'
+    ];
+
+    protected array $filterFields = [
+        'club_session_id',
+        'student_id',
+        'status'
+    ];
 
     protected function getModel(): string
     {

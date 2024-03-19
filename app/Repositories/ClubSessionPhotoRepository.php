@@ -11,7 +11,9 @@ class ClubSessionPhotoRepository extends BaseRepository
         'created_at'
     ];
 
-    protected array $filterFields = [];
+    protected array $filterFields = [
+        'session_id'
+    ];
 
     protected function getModel(): string
     {

@@ -11,7 +11,9 @@ class StudentRepository extends BaseRepository
     ];
     protected array $filterFields = [
         'name',
-        'name_like'
+        'name_like',
+        'user_id',
+        'class_id'
     ];
 
     protected function getModel(): string

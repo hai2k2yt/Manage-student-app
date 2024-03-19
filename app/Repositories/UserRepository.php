@@ -9,13 +9,13 @@ class UserRepository extends BaseRepository
 {
     protected array $sortFields = [
         'name',
-        'email'
+        'username'
     ];
     protected array $filterFields = [
         'name',
         'name_like',
-        'email',
-        'email_like'
+        'username',
+        'username_like'
     ];
 
     protected function getModel(): string
