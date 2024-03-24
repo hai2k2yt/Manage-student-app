@@ -58,9 +58,15 @@ class AbsenceReportController extends Controller
             $club_session_id = $requestData['club_session_id'];
             $student_id = $requestData['student_id'];
             $club_session = $this->clubSessionRepository->find($club_session_id);
-            $student_ids = $club_session->schedule->club->students->pluck('id');
-            if(in_array($student_id, $student_ids)) {
-                return $this->sendError(__('student.existed'), ErrorCodeEnum::AbsenceReportStore);
+
+            $club_student_ids = $club_session->schedule->club->students->pluck('id')->toArray();
+            if(!in_array($student_id, $club_student_ids)) {
+                return $this->sendError(__('student.not_in_club'), ErrorCodeEnum::AbsenceReportStore);
+            }
+
+            $absence_report_student_ids = $club_session->absence_reports->pluck('student_id')->toArray();
+            if(in_array($student_id, $absence_report_student_ids)) {
+                return $this->sendError(__('absence_report.existed'), ErrorCodeEnum::AbsenceReportStore);
             }
             if ($request->user()->cannot('store', AbsenceReport::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
@@ -139,5 +145,12 @@ class AbsenceReportController extends Controller
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::AbsenceReportDelete);
         }
+    }
+
+    public function getBySession(string $id) {
+        $absenceReports = $this->absenceReportRepository->getAbsenceReportList(array(
+            'session_id' => $id
+        ));
+        return $this->sendResponse($absenceReports);
     }
 }

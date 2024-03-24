@@ -106,6 +106,8 @@ Route::middleware('api')->group(function () {
         Route::get('/club-session/{id}', [AbsenceReportController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
         Route::delete('/{id?}', [AbsenceReportController::class, 'destroy'])->name('destroy');
+        Route::get('/session/{id?}', [AbsenceReportController::class, 'getBySession'])->name('getBySession');
+
     });
 
     Route::prefix('attendance')->group(function () {

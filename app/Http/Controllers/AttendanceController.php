@@ -58,9 +58,13 @@ class AttendanceController extends Controller
             $club_session_id = $requestData['club_session_id'];
             $student_id = $requestData['student_id'];
             $club_session = $this->clubSessionRepository->find($club_session_id);
-            $student_ids = $club_session->schedule->club->students->pluck('id');
-            if (in_array($student_id, $student_ids)) {
-                return $this->sendError(__('student.existed'), ErrorCodeEnum::AbsenceReportStore);
+            $club_student_ids = $club_session->schedule->club->students->pluck('id')->toArray();
+            if (!in_array($student_id, $club_student_ids)) {
+                return $this->sendError(__('student.existed'), ErrorCodeEnum::AttendanceStore);
+            }
+            $attendance_student_ids = $club_session->attendance->pluck('id')->toArray();
+            if(in_array($student_id, $attendance_student_ids)) {
+                return $this->sendError(__('attendance.existed'), ErrorCodeEnum::AttendanceStore);
             }
             if ($request->user()->cannot('store', Attendance::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);

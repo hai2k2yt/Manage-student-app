@@ -28,12 +28,12 @@ class ClubSession extends BaseModel
 
     public function absence_reports(): HasMany
     {
-        return $this->hasMany(AbsenceReport::class, 'session_id');
+        return $this->hasMany(AbsenceReport::class, 'club_session_id');
     }
 
     public function attendances(): HasMany
     {
-        return $this->hasMany(Attendance::class, 'session_id');
+        return $this->hasMany(Attendance::class, 'club_session_id');
     }
 
     public function photos(): HasMany
