@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Enums\RoleEnum;
 use App\Http\Requests\ClubSessionPhoto\StoreClubSessionPhotoRequest;
 use App\Http\Requests\ClubSessionPhoto\UpdateClubSessionPhotoRequest;
 use App\Http\Resources\ClubSessionPhotoResource;
+use App\Models\ClubSessionPhoto;
 use App\Repositories\ClubSessionPhotoRepository;
+use App\Repositories\ClubSessionRepository;
 use Exception;
+use HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +22,12 @@ class ClubSessionPhotoController extends Controller
 {
     /**
      * @param ClubSessionPhotoRepository $clubSessionPhotoRepository
+     * @param ClubSessionRepository $clubSessionRepository
      */
-    public function __construct(protected ClubSessionPhotoRepository $clubSessionPhotoRepository)
+    public function __construct(
+        protected ClubSessionPhotoRepository $clubSessionPhotoRepository,
+        protected ClubSessionRepository      $clubSessionRepository
+    )
     {
     }
 
@@ -48,11 +56,18 @@ class ClubSessionPhotoController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-
+            $session_id = $requestData['session_id'];
+            $club_session = $this->clubSessionRepository->find($session_id);
+            if ($request->user()->cannot('store', ClubSessionPhoto::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $club_session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $path = Storage::putFile('public', $requestData['photo_url']);
 
             $clubSessionPhoto = $this->clubSessionPhotoRepository->create([
-                "session_id" => $requestData['session_id'],
+                "session_id" => $session_id,
                 "photo_url" => $path
             ]);
             $clubSessionPhotoResource = new ClubSessionPhotoResource($clubSessionPhoto);
@@ -76,6 +91,16 @@ class ClubSessionPhotoController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
+            $club_session_photo = $this->clubSessionPhotoRepository->find($id);
+            if(!$club_session_photo) {
+                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionPhotoUpdate, Response::HTTP_NOT_FOUND);
+            }
+            if ($request->user()->cannot('update', ClubSessionPhoto::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $club_session_photo->session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $path = Storage::putFile('public', $requestData['photo_url']);
             $requestData['photo_url'] = $path;
             $clubSessionPhoto = $this->clubSessionPhotoRepository->find($id);
@@ -98,13 +123,19 @@ class ClubSessionPhotoController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         DB::beginTransaction();
         try {
             $clubSessionPhoto = $this->clubSessionPhotoRepository->find($id);
             if (!$clubSessionPhoto) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionPhotoDelete, Response::HTTP_NOT_FOUND);
+            }
+            if ($request->user()->cannot('destroy', ClubSessionPhoto::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSessionPhoto->session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->clubSessionPhotoRepository->delete($id);
             DB::commit();

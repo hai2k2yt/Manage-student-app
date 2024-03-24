@@ -104,6 +104,7 @@ class StudentController extends Controller
     /**
      * Delete corporation department.
      *
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      */

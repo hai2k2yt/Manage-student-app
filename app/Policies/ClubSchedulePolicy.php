@@ -22,10 +22,10 @@ class ClubSchedulePolicy
      * @param User $user
      * @return bool
      */
-    public function store(User $user, Club $club): bool
+    public function store(User $user): bool
     {
         if($user->role == RoleEnum::ADMIN->value) return true;
-        if($user->role == RoleEnum::TEACHER->value && $user->id == $club->teacher_id) return true;
+        if($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 
@@ -35,10 +35,10 @@ class ClubSchedulePolicy
      * @param User $user
      * @return bool
      */
-    public function update(User $user, Club $club): bool
+    public function update(User $user): bool
     {
         if($user->role == RoleEnum::ADMIN->value) return true;
-        if($user->role == RoleEnum::TEACHER->value && $user->id == $club->teacher_id) return true;
+        if($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 
@@ -48,10 +48,10 @@ class ClubSchedulePolicy
      * @param User $user
      * @return bool
      */
-    public function destroy(User $user, Club $club): bool
+    public function destroy(User $user): bool
     {
         if($user->role == RoleEnum::ADMIN->value) return true;
-        if($user->role == RoleEnum::TEACHER->value && $user->id == $club->teacher_id) return true;
+        if($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 }

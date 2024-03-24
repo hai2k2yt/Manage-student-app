@@ -74,8 +74,9 @@ Route::middleware('api')->group(function () {
         Route::get('/all', [ClubEnrollmentController::class, 'all'])->name('all');
         Route::get('', [ClubEnrollmentController::class, 'index'])->name('index');
         Route::post('', [ClubEnrollmentController::class, 'store'])->name('store');
-        Route::put('/{id?}', [ClubEnrollmentController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubEnrollmentController::class, 'destroy'])->name('destroy');
+        Route::post('/assign-students', [ClubEnrollmentController::class, 'assignStudents'])->name('assignStudents');
+
     });
 
     Route::prefix('club-schedule')->group(function () {

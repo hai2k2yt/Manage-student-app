@@ -8,6 +8,7 @@ use App\Http\Requests\StudentClass\StoreStudentClassRequest;
 use App\Http\Requests\StudentClass\UpdateStudentClassRequest;
 use App\Http\Resources\StudentClassResource;
 use App\Models\Student;
+use App\Models\StudentClass;
 use App\Repositories\StudentClassRepository;
 use App\Repositories\StudentRepository;
 use Exception;
@@ -15,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StudentClassController extends Controller
 {
@@ -54,6 +56,9 @@ class StudentClassController extends Controller
     {
         DB::beginTransaction();
         try {
+            if ($request->user()->cannot('store', StudentClass::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $requestData = $request->validated();
             $studentClass = $this->studentClassRepository->create($requestData);
             $studentResource = new StudentClassResource($studentClass);
@@ -82,6 +87,9 @@ class StudentClassController extends Controller
     {
         DB::beginTransaction();
         try {
+            if ($request->user()->cannot('update', StudentClass::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $requestData = $request->validated();
             $student = $this->studentClassRepository->find($id);
             if (!$student) {
@@ -104,10 +112,13 @@ class StudentClassController extends Controller
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         DB::beginTransaction();
         try {
+            if ($request->user()->cannot('destroy', StudentClass::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $studentClass = $this->studentClassRepository->find($id);
             if (!$studentClass) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClassDelete, Response::HTTP_NOT_FOUND);
@@ -128,6 +139,13 @@ class StudentClassController extends Controller
             $requestData = $request->validated();
             $student_ids = $requestData->student_ids;
             $class_id = $requestData->class_id;
+            $class = $this->studentClassRepository->find($class_id);
+            if (!$class) {
+                return $this->sendResponse('common.not_found', __('common.updated'));
+            }
+            if ($request->user()->cannot('assignStudents', $class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $response = [
                 "update_success" => [],
                 "not_found" => [],

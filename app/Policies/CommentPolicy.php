@@ -24,12 +24,10 @@ class CommentPolicy
      * @param ClubSession $clubSession
      * @return bool
      */
-    public function store(User $user, ClubSession $clubSession): bool
+    public function store(User $user): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value) {
-            if ($user->id == $clubSession->teacher_id) return true;
-        }
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 

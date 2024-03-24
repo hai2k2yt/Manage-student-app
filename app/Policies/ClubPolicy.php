@@ -31,6 +31,7 @@ class ClubPolicy
      * Determine whether the user can update the model.
      *
      * @param User $user
+     * @param Club $club
      * @return bool
      */
     public function update(User $user, Club $club): bool

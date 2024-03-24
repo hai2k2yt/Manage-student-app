@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Enums\RoleEnum;
 use App\Http\Requests\ClubSchedule\StoreClubScheduleRequest;
 use App\Http\Requests\ClubSchedule\UpdateClubScheduleRequest;
 use App\Http\Resources\ClubScheduleResource;
+use App\Models\ClubSchedule;
+use App\Repositories\ClubRepository;
 use App\Repositories\ClubScheduleRepository;
 use Exception;
+use HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +21,12 @@ class ClubScheduleController extends Controller
 {
     /**
      * @param ClubScheduleRepository $clubScheduleRepository
+     * @param ClubRepository $clubRepository
      */
-    public function __construct(protected ClubScheduleRepository $clubScheduleRepository)
+    public function __construct(
+        protected ClubScheduleRepository $clubScheduleRepository,
+        protected ClubRepository         $clubRepository
+    )
     {
     }
 
@@ -47,6 +55,14 @@ class ClubScheduleController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
+            $club_id = $requestData['club_id'];
+            $club = $this->clubRepository->find($club_id);
+            if ($request->user()->cannot('store', ClubSchedule::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $club->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $clubSchedule = $this->clubScheduleRepository->create($requestData);
             $clubScheduleResource = new ClubScheduleResource($clubSchedule);
             DB::commit();
@@ -87,7 +103,12 @@ class ClubScheduleController extends Controller
             if (!$clubSchedule) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubScheduleUpdate, Response::HTTP_NOT_FOUND);
             }
-
+            if ($request->user()->cannot('update', ClubSchedule::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSchedule->club->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $clubSchedule = $this->clubScheduleRepository->update($id, $requestData);
             $clubScheduleResource = new ClubScheduleResource($clubSchedule);
             DB::commit();
@@ -101,16 +122,23 @@ class ClubScheduleController extends Controller
     /**
      * Delete corporation department.
      *
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         DB::beginTransaction();
         try {
             $clubSchedule = $this->clubScheduleRepository->find($id);
             if (!$clubSchedule) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubScheduleDelete, Response::HTTP_NOT_FOUND);
+            }
+            if ($request->user()->cannot('destroy', ClubSchedule::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSchedule->club->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->clubScheduleRepository->delete($id);
             DB::commit();

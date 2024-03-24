@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Enums\RoleEnum;
 use App\Http\Requests\AbsenceReport\StoreAbsenceReportRequest;
 use App\Http\Requests\AbsenceReport\UpdateAbsenceReportRequest;
 use App\Http\Resources\AbsenceReportResource;
+use App\Models\AbsenceReport;
 use App\Repositories\AbsenceReportRepository;
+use App\Repositories\ClubSessionRepository;
 use Exception;
+use HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +21,12 @@ class AbsenceReportController extends Controller
 {
     /**
      * @param AbsenceReportRepository $absenceReportRepository
+     * @param ClubSessionRepository $clubSessionRepository
      */
-    public function __construct(protected AbsenceReportRepository $absenceReportRepository)
+    public function __construct(
+        protected AbsenceReportRepository $absenceReportRepository,
+        protected ClubSessionRepository   $clubSessionRepository
+    )
     {
     }
 
@@ -47,6 +55,14 @@ class AbsenceReportController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
+            $club_session_id = $requestData['club_session_id'];
+            $club_session = $this->clubSessionRepository->find($club_session_id);
+            if ($request->user()->cannot('store', AbsenceReport::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $club_session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $absenceReport = $this->absenceReportRepository->create($requestData);
             $absenceReportResource = new AbsenceReportResource($absenceReport);
             DB::commit();
@@ -73,7 +89,12 @@ class AbsenceReportController extends Controller
             if (!$absenceReport) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AbsenceReportUpdate, Response::HTTP_NOT_FOUND);
             }
-
+            if ($request->user()->cannot('update', AbsenceReport::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $absenceReport->session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
             $absenceReport = $this->absenceReportRepository->update($id, $requestData);
             $absenceReportResource = new AbsenceReportResource($absenceReport);
             DB::commit();
@@ -87,16 +108,23 @@ class AbsenceReportController extends Controller
     /**
      * Delete corporation department.
      *
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
         DB::beginTransaction();
         try {
             $absenceReport = $this->absenceReportRepository->find($id);
             if (!$absenceReport) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AbsenceReportDelete, Response::HTTP_NOT_FOUND);
+            }
+            if ($request->user()->cannot('destroy', AbsenceReport::class)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if ($request->user()->role == RoleEnum::TEACHER->value && $absenceReport->session->schedule->teacher_id != $request->user()->id) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->absenceReportRepository->delete($id);
             DB::commit();
