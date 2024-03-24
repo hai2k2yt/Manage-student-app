@@ -49,7 +49,7 @@ class ClubController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->user()->cannot('store', Club::class)) {
+            if ($request->user()->cannot('store', Club::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
@@ -85,7 +85,7 @@ class ClubController extends Controller
             if (!$club) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubUpdate, Response::HTTP_NOT_FOUND);
             }
-            if($request->user()->cannot('update', $club)) {
+            if ($request->user()->cannot('update', $club)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $club = $this->clubRepository->update($id, $requestData);
@@ -113,7 +113,7 @@ class ClubController extends Controller
             if (!$club) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubDelete, Response::HTTP_NOT_FOUND);
             }
-            if($request->user()->cannot('destroy', Club::class)) {
+            if ($request->user()->cannot('destroy', Club::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->clubRepository->delete($id);
