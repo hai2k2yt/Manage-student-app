@@ -147,7 +147,8 @@ class AbsenceReportController extends Controller
         }
     }
 
-    public function getBySession(string $id) {
+    public function getBySession(string $id): JsonResponse
+    {
         $absenceReports = $this->absenceReportRepository->getAbsenceReportList(array(
             'session_id' => $id
         ));

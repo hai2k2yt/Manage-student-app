@@ -2,16 +2,13 @@
 
 namespace App\Http\Requests\Attendance;
 
-use App\Enums\AttendanceEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateAttendanceRequest extends FormRequest
+class UpdateManyAttendanceRequest extends FormRequest
 {
     use ApiFailedValidation;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,18 +25,22 @@ class UpdateAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'present' => [
-                'required',
-                Rule::in(AttendanceEnum::values())
-            ],
+            'present' => 'nullable|array',
+            'present.*' => 'exists:students,id',
+            'permission_absence' => 'nullable|array',
+            'permission_absence.*' => 'exists:students,id',
+            'unexcused_absence' => 'nullable|array',
+            'unexcused_absence.*' => 'exists:students,id'
+
         ];
     }
 
     public function messages(): array
     {
         return [
-            'present.required' => __('validation.required'),
-            'present.in' => __('validation.in'),
+            'present.*.exists' => __('validation.exists'),
+            'permission_absence.*.exists' => __('validation.exists'),
+            'unexcused_absence.*.exists' => __('validation.exists'),
         ];
     }
 }

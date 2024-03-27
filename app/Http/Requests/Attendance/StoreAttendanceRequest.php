@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Attendance;
 
+use App\Enums\AttendanceEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAttendanceRequest extends FormRequest
 {
@@ -27,7 +29,10 @@ class StoreAttendanceRequest extends FormRequest
         return [
             'club_session_id' => 'required|exists:club_sessions,id',
             'student_id' => 'required|exists:students,id',
-            'present' => 'required|boolean',
+            'present' => [
+                'required',
+                Rule::in(AttendanceEnum::values())
+            ],
         ];
     }
 
@@ -39,7 +44,7 @@ class StoreAttendanceRequest extends FormRequest
             'student_id.required' => __('validation.required'),
             'student_id.exists' => __('validation.exists'),
             'present.required' => __('validation.required'),
-            'present.boolean' => __('validation.boolean'),
+            'present.in' => __('validation.in'),
         ];
     }
 }

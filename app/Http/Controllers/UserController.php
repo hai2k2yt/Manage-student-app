@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,10 +11,16 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
-     * @param UserRepository $userRepository
      */
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct()
     {
+    }
+
+    public function all(Request $request): JsonResponse
+    {
+        $users = User::all();
+        $records = UserResource::collection($users);
+        return $this->sendResponse($records);
     }
 
     /**
@@ -24,5 +31,14 @@ class UserController extends Controller
         $users = $this->userRepository->getAll();
 
         return $this->sendPaginationResponse($users, UserResource::collection($users));
+    }
+
+    public function show(string $id): JsonResponse
+    {
+        $user = User::find($id);
+        if(!$user) {
+            return $this->sendError(__('user.not_found'));
+        }
+        return $this->sendResponse($user);
     }
 }

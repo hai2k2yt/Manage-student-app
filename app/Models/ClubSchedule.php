@@ -28,7 +28,7 @@ class ClubSchedule extends BaseModel
         return $this->belongsTo(Club::class);
     }
 
-    public function clubSchedules(): HasMany {
+    public function sessions(): HasMany {
         return $this->hasMany(ClubSession::class, 'schedule_id');
     }
 }

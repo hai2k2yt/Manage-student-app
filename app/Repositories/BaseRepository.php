@@ -301,7 +301,7 @@ abstract class BaseRepository
      * @param          $collection
      * @param array $conditions
      * @param string[] $columns
-     *
+     * @param array $relations
      * @return mixed
      */
     protected function applyConditions($collection, array $conditions = [], array $columns = ['*'], array $relations = []): mixed
@@ -446,7 +446,7 @@ abstract class BaseRepository
      * @return mixed
      */
 
-    public function applyDateRangeFilters(mixed $collection, array $conditions,  string $column,  string $fieldName): mixed
+    public function applyDateRangeFilters(mixed $collection, array $conditions, string $column, string $fieldName): mixed
     {
         $gteKey = $fieldName . '_gte';
         $lteKey = $fieldName . '_lte';

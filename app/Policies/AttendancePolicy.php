@@ -21,7 +21,6 @@ class AttendancePolicy
      * Determine whether the user can create the model.
      *
      * @param User $user
-     * @param ClubSession $clubSession
      * @return bool
      */
     public function store(User $user): bool
@@ -44,6 +43,19 @@ class AttendancePolicy
         if ($user->role == RoleEnum::TEACHER->value && $user->id == $attendance->session->teacher_id) return true;
 
 
+        return false;
+    }
+
+    /**
+     * Determine whether the user can update many record in the model.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function updateMany(User $user): bool
+    {
+        if ($user->role == RoleEnum::ADMIN->value) return true;
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 

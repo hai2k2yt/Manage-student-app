@@ -28,6 +28,6 @@ class ClubRepository extends BaseRepository
 
     public function getClub(string $id)
     {
-        return $this->find($id, ['students']);
+        return $this->find($id);
     }
 }

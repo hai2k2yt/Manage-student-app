@@ -2,5 +2,6 @@
 
 return [
     'created' => 'Created',
-    'updated' => 'Updated'
+    'updated' => 'Updated',
+    'get_success' => 'Get success'
 ];

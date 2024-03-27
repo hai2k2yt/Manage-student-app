@@ -31,8 +31,10 @@ enum ErrorCodeEnum: string
     case ClubScheduleDelete = 'E-042';
 
     case ClubSessionStore = 'E-050';
-    case ClubSessionUpdate = 'E-051';
-    case ClubSessionDelete = 'E-052';
+    case ClubShow = 'E-051';
+    case ClubGetStudents = 'E-052';
+    case ClubSessionUpdate = 'E-053';
+    case ClubSessionDelete = 'E-054';
 
     case AbsenceReportStore = 'E-060';
     case AbsenceReportUpdate = 'E-061';
@@ -41,6 +43,8 @@ enum ErrorCodeEnum: string
     case AttendanceStore = 'E-070';
     case AttendanceUpdate = 'E-071';
     case AttendanceDelete = 'E-072';
+    case AttendanceUpdateMany = 'E-073';
+    case AttendanceStatisticStudent = 'E-074';
 
     case ClubSessionPhotoStore = 'E-080';
     case ClubSessionPhotoUpdate = 'E-081';
@@ -53,5 +57,7 @@ enum ErrorCodeEnum: string
     case NotificationStore = 'E-100';
     case NotificationUpdate = 'E-101';
     case NotificationDelete = 'E-102';
+
+
 
 }

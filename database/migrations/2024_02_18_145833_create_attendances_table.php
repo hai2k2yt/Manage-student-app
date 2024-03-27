@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('id');
             $table->uuid('club_session_id');
             $table->uuid('student_id');
-            $table->boolean('present');
+            $table->unsignedInteger('present');
             $table->timestamps();
             $table->softDeletes();
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,12 @@ Route::middleware('api')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
     });
 
+    Route::prefix('user')->group(function () {
+        Route::get('/all', [UserController::class, 'all'])->name('all');
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::get('{id}', [UserController::class, 'show'])->name('show');
+    });
+
     Route::prefix('student')->group(function () {
         Route::get('/all', [StudentController::class, 'all'])->name('all');
         Route::get('', [StudentController::class, 'index'])->name('index');
@@ -66,6 +73,7 @@ Route::middleware('api')->group(function () {
         Route::get('', [ClubController::class, 'index'])->name('index');
         Route::post('', [ClubController::class, 'store'])->name('store');
         Route::get('{id}', [ClubController::class, 'show'])->name('show');
+        Route::get('{id}/students', [ClubController::class, 'students'])->name('students');
         Route::put('/{id?}', [ClubController::class, 'update'])->name('update');
         Route::delete('/{id?}', [ClubController::class, 'destroy'])->name('destroy');
     });
@@ -116,7 +124,9 @@ Route::middleware('api')->group(function () {
         Route::post('', [AttendanceController::class, 'store'])->name('store');
         Route::get('/club-session/{id}', [AttendanceController::class, 'getByClubSession'])->name('getByClubSession');
         Route::put('/{id?}', [AttendanceController::class, 'update'])->name('update');
+        Route::put('update-many/{id?}', [AttendanceController::class, 'updateMany'])->name('updateMany');
         Route::delete('/{id?}', [AttendanceController::class, 'destroy'])->name('destroy');
+        Route::get('/club/{club_id?}/student/{student_id?}', [AttendanceController::class, 'statisticStudents'])->name('statisticStudents');
     });
 
     Route::prefix('club-session-photo')->group(function () {

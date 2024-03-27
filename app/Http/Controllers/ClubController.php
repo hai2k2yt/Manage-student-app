@@ -66,7 +66,19 @@ class ClubController extends Controller
     public function show(string $id): JsonResponse
     {
         $club = $this->clubRepository->getClub($id);
-        return $this->sendResponse($club);
+        if(!$club) {
+            return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubShow, Response::HTTP_NOT_FOUND);
+        }
+        return $this->sendResponse($club, __('common.get_success'));
+    }
+
+    public function students(string $id): JsonResponse
+    {
+        $club = $this->clubRepository->getClub($id);
+        if(!$club) {
+            return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubGetStudents, Response::HTTP_NOT_FOUND);
+        }
+        return $this->sendResponse($club->students, __('common.get_success'));
     }
 
     /**
