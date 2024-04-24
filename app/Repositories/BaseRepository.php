@@ -24,7 +24,8 @@ abstract class BaseRepository
     protected array $filterFields = [];
     private string $searchLikePrefix = '_like';
     private array $orderValues = ['desc', 'asc'];
-    private BaseModel $model;
+
+    protected BaseModel $model;
 
     public function __construct()
     {
@@ -249,7 +250,7 @@ abstract class BaseRepository
      *
      * @param array $conditions
      * @param string[] $columns
-     *
+     * @param array $relations
      * @return mixed
      */
     public function getByConditions(array $conditions = [], array $columns = ['*'], array $relations = []): mixed
@@ -306,6 +307,11 @@ abstract class BaseRepository
      */
     protected function applyConditions($collection, array $conditions = [], array $columns = ['*'], array $relations = []): mixed
     {
+        // Load relations
+        if (count($relations)) {
+            $collection = $collection->with($relations);
+        }
+
         // Apply search condition
         $collection = $this->applySearch($collection, $conditions);
 
@@ -317,11 +323,6 @@ abstract class BaseRepository
 
         //Apply advanced by condition
         $collection = $this->applyAdvanced($collection, $conditions);
-
-        // Load relations
-        if (count($relations)) {
-            $collection = $collection->with($relations);
-        }
 
         // Apply pagination by condition
         return $this->applyPagination($collection, $conditions, $columns);

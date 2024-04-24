@@ -23,7 +23,7 @@ class StudentFactory extends Factory
         return [
             'name' => fake()->name(),
             'user_id' => User::where('role', RoleEnum::PARENT)->pluck('id')->random(),
-            'class_id' => StudentClass::pluck('id')->random()
+            'class_code' => StudentClass::pluck('class_code')->random()
         ];
     }
 }

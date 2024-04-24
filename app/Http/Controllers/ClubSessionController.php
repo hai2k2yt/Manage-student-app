@@ -10,6 +10,7 @@ use App\Http\Resources\ClubSessionResource;
 use App\Models\ClubSession;
 use App\Repositories\ClubScheduleRepository;
 use App\Repositories\ClubSessionRepository;
+use App\Repositories\TeacherRepository;
 use Exception;
 use HttpException;
 use Illuminate\Http\JsonResponse;
@@ -22,10 +23,12 @@ class ClubSessionController extends Controller
     /**
      * @param ClubSessionRepository $clubSessionRepository
      * @param ClubScheduleRepository $clubScheduleRepository
+     * @param TeacherRepository $teacherRepository
      */
     public function __construct(
         protected ClubSessionRepository  $clubSessionRepository,
-        protected ClubScheduleRepository $clubScheduleRepository
+        protected ClubScheduleRepository $clubScheduleRepository,
+        protected TeacherRepository      $teacherRepository
     )
     {
     }
@@ -55,13 +58,15 @@ class ClubSessionController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $schedule_id = $requestData['schedule_id'];
-            $clubSchedule = $this->clubScheduleRepository->find($schedule_id);
+            $schedule_code = $requestData['schedule_code'];
+            $clubSchedule = $this->clubScheduleRepository->getClubSchedule($schedule_code);
             if ($request->user()->cannot('store', ClubSession::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSchedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $clubSchedule->teacher_code != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $clubSession = $this->clubSessionRepository->create($requestData);
             $clubSessionResource = new ClubSessionResource($clubSession);
@@ -79,11 +84,12 @@ class ClubSessionController extends Controller
         return $this->sendResponse($clubSession);
     }
 
-    public function getByClub(string $id): JsonResponse
+    public function getByClub(Request $request, string $id): JsonResponse
     {
-        $clubSessions = $this->clubSessionRepository->getByClubId($id);
+        $conditions = $request->all();
+        $clubSessions = $this->clubSessionRepository->getByClubCode($id, $conditions);
 
-        return $this->sendResponse($clubSessions);
+        return $this->sendPaginationResponse($clubSessions, ClubSessionResource::collection($clubSessions));
     }
 
     /**
@@ -98,17 +104,19 @@ class ClubSessionController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $clubSession = $this->clubSessionRepository->find($id);
+            $clubSession = $this->clubSessionRepository->getClubSession($id);
             if (!$clubSession) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionUpdate, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('update', ClubSession::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSession->schedule->teacher_id != $request->user()->id) {
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if(!$requestTeacher && $clubSession->schedule->teacher_code != $requestTeacher->teacher_code)
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $clubSession = $this->clubSessionRepository->update($id, $requestData);
+            $clubSession = $this->clubSessionRepository->update($clubSession->id, $requestData);
             $clubSessionResource = new ClubSessionResource($clubSession);
             DB::commit();
             return $this->sendResponse($clubSessionResource, __('common.updated'));
@@ -136,10 +144,12 @@ class ClubSessionController extends Controller
             if ($request->user()->cannot('destroy', ClubSession::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $clubSession->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if(!$requestTeacher && $clubSession->schedule->teacher_code != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $this->clubSessionRepository->delete($id);
+            $this->clubSessionRepository->delete($clubSession->id);
             DB::commit();
             return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
         } catch (Exception $error) {

@@ -16,12 +16,12 @@ class ClubSessionPhoto extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'session_id',
+        'session_code',
         'photo_url'
     ];
 
     public function session(): BelongsTo
     {
-        return $this->belongsTo(ClubSession::class, 'session_id');
+        return $this->belongsTo(ClubSession::class, 'session_code', 'session_code');
     }
 }

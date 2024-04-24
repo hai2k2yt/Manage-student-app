@@ -25,21 +25,21 @@ class AssignStudentToClubRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'required|exists:students,id',
-            'club_id' => 'required|exists:clubs,id'
+            'student_codes' => 'required|array',
+            'student_codes.*' => 'required|exists:students,student_code',
+            'club_code' => 'required|exists:clubs,club_code'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'student_ids.required' => __('validation.required'),
-            'student_ids.array' => __('validation.array'),
-            'student_ids.*.required' => __('validation.required'),
-            'student_ids.*.exists' => __('validation.exists'),
-            'club_id.required' => __('validation.required'),
-            'club_id.exists' => __('validation.exists')
+            'student_codes.required' => __('validation.required'),
+            'student_codes.array' => __('validation.array'),
+            'student_codes.*.required' => __('validation.required'),
+            'student_codes.*.exists' => __('validation.exists'),
+            'club_code.required' => __('validation.required'),
+            'club_code.exists' => __('validation.exists')
         ];
     }
 }

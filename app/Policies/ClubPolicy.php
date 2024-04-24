@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Enums\RoleEnum;
 use App\Models\Club;
+use App\Models\Teacher;
 use App\Models\User;
 
 class ClubPolicy
@@ -36,8 +37,12 @@ class ClubPolicy
      */
     public function update(User $user, Club $club): bool
     {
-        if($user->role == RoleEnum::ADMIN->value) return true;
-        if($user->role == RoleEnum::TEACHER->value && $user->id == $club->teacher_id) return true;
+        if ($user->role == RoleEnum::ADMIN->value) return true;
+        if ($user->role == RoleEnum::TEACHER->value) {
+            $teacher = Teacher::where('user_id', $user->id);
+            if (!$teacher) return false;
+            if ($teacher->teacher_code == $club->teacher_code) return true;
+        }
         return false;
     }
 

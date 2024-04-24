@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('club_sessions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('schedule_id');
-            $table->dateTime('date');
+            $table->id();
+            $table->string('session_code')->unique();
+            $table->string('schedule_code');
+            $table->string('session_name');
+            $table->date('date');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('schedule_id')->references('id')->on('club_schedules');
+            $table->foreign('schedule_code')->references('schedule_code')->on('club_schedules');
         });
     }
 

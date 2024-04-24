@@ -93,15 +93,15 @@ class ClubController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $club = $this->clubRepository->find($id);
+            $club = $this->clubRepository->getClub($id);
             if (!$club) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubUpdate, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('update', $club)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $club = $this->clubRepository->update($id, $requestData);
-            $clubResource = new ClubResource($club);
+            $clubData = $this->clubRepository->update($club->id, $requestData);
+            $clubResource = new ClubResource($clubData);
             DB::commit();
             return $this->sendResponse($clubResource, __('common.updated'));
         } catch (Exception $error) {
@@ -121,14 +121,14 @@ class ClubController extends Controller
     {
         DB::beginTransaction();
         try {
-            $club = $this->clubRepository->find($id);
+            $club = $this->clubRepository->getClub($id);
             if (!$club) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubDelete, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('destroy', Club::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $this->clubRepository->delete($id);
+            $this->clubRepository->delete($club->id);
             DB::commit();
             return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
         } catch (\Exception $error) {

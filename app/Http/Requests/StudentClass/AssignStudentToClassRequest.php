@@ -25,21 +25,21 @@ class AssignStudentToClassRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'required|exists:students,id',
-            'class_id' => 'required|exists:classes,id'
+            'student_codes' => 'required|array',
+            'student_codes.*' => 'required|exists:students,student_code',
+            'class_code' => 'required|exists:classes,class_code'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'student_ids.required' => __('validation.required'),
-            'student_ids.array' => __('validation.array'),
-            'student_ids.*.required' => __('validation.required'),
-            'student_ids.*.exists' => __('validation.exists'),
-            'class_id.required' => __('validation.required'),
-            'class_id.exists' => __('validation.exists')
+            'student_codes.required' => __('validation.required'),
+            'student_codes.array' => __('validation.array'),
+            'student_codes.*.required' => __('validation.required'),
+            'student_codes.*.exists' => __('validation.exists'),
+            'class_code.required' => __('validation.required'),
+            'class_code.exists' => __('validation.exists')
         ];
     }
 }

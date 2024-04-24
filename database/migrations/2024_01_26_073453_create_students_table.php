@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
 
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->string('student_code')->unique();
             $table->string('name');
-            $table->uuid('user_id')->nullable();
-            $table->uuid('class_id')->nullable();
+            $table->foreignId('user_id')->nullable();
+            $table->string('class_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('class_id')->references('id')->on('classes')->nullOnDelete();
+            $table->foreign('class_code')->references('class_code')->on('classes')->nullOnDelete();
         });
     }
 

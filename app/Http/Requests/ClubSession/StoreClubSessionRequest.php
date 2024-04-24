@@ -25,7 +25,9 @@ class StoreClubSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schedule_id' => 'required|exists:club_schedules,id',
+            'session_code' => 'required|string|unique:club_sessions,session_code|max:255',
+            'session_name' => 'required|string|max:255',
+            'schedule_code' => 'required|exists:club_schedules,schedule_code',
             'date' => 'required|date',
         ];
     }
@@ -33,8 +35,8 @@ class StoreClubSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'schedule_id.required' => __('validation.required'),
-            'schedule_id.exists' => __('validation.exists'),
+            'schedule_code.required' => __('validation.required'),
+            'schedule_code.exists' => __('validation.exists'),
             'date.required' => __('validation.required'),
             'date.date' => __('validation.date'),
         ];

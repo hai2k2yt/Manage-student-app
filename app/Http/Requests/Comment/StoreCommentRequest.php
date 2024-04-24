@@ -25,24 +25,21 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_session_id' => 'required|exists:club_sessions,id',
-            'student_id' => 'required|exists:students,id',
-            'comment_text' => 'required|string',
-            'rating' => 'required|integer'
+            'session_code' => 'required|exists:club_sessions,session_code',
+            'student_code' => 'required|exists:students,student_code',
+            'content' => 'required|string',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'club_session_id.required' => __('validation.required'),
-            'club_session_id.exists' => __('validation.exists'),
-            'student_id.required' => __('validation.required'),
-            'student_id.exists' => __('validation.exists'),
-            'comment_text.required' => __('validation.required'),
-            'comment_text.string' => __('validation.string'),
-            'rating.required' => __('validation.required'),
-            'rating.integer' => __('validation.integer')
+            'session_code.required' => __('validation.required'),
+            'session_code.exists' => __('validation.exists'),
+            'student_code.required' => __('validation.required'),
+            'student_code.exists' => __('validation.exists'),
+            'content.required' => __('validation.required'),
+            'content.string' => __('validation.string'),
         ];
     }
 }

@@ -12,7 +12,7 @@ class ClubSessionPhotoRepository extends BaseRepository
     ];
 
     protected array $filterFields = [
-        'session_id'
+        'session_code'
     ];
 
     protected function getModel(): string

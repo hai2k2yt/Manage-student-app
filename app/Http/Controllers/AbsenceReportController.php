@@ -8,8 +8,10 @@ use App\Http\Requests\AbsenceReport\StoreAbsenceReportRequest;
 use App\Http\Requests\AbsenceReport\UpdateAbsenceReportRequest;
 use App\Http\Resources\AbsenceReportResource;
 use App\Models\AbsenceReport;
+use App\Models\Teacher;
 use App\Repositories\AbsenceReportRepository;
 use App\Repositories\ClubSessionRepository;
+use App\Repositories\TeacherRepository;
 use Exception;
 use HttpException;
 use Illuminate\Http\JsonResponse;
@@ -22,10 +24,12 @@ class AbsenceReportController extends Controller
     /**
      * @param AbsenceReportRepository $absenceReportRepository
      * @param ClubSessionRepository $clubSessionRepository
+     * @param TeacherRepository $teacherRepository
      */
     public function __construct(
         protected AbsenceReportRepository $absenceReportRepository,
-        protected ClubSessionRepository   $clubSessionRepository
+        protected ClubSessionRepository   $clubSessionRepository,
+        protected TeacherRepository       $teacherRepository,
     )
     {
     }
@@ -55,24 +59,25 @@ class AbsenceReportController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $club_session_id = $requestData['club_session_id'];
-            $student_id = $requestData['student_id'];
-            $club_session = $this->clubSessionRepository->find($club_session_id);
+            $session_code = $requestData['session_code'];
+            $student_code = $requestData['student_code'];
+            $club_session = $this->clubSessionRepository->getClubSession($session_code);
 
-            $club_student_ids = $club_session->schedule->club->students->pluck('id')->toArray();
-            if(!in_array($student_id, $club_student_ids)) {
+            $club_student_codes = $club_session->schedule->club->students->pluck('student_code')->toArray();
+            if (!in_array($student_code, $club_student_codes)) {
                 return $this->sendError(__('student.not_in_club'), ErrorCodeEnum::AbsenceReportStore);
             }
 
-            $absence_report_student_ids = $club_session->absence_reports->pluck('student_id')->toArray();
-            if(in_array($student_id, $absence_report_student_ids)) {
+            $absence_report_student_codes = $club_session->absence_reports->pluck('student_code')->toArray();
+            if (in_array($student_code, $absence_report_student_codes)) {
                 return $this->sendError(__('absence_report.existed'), ErrorCodeEnum::AbsenceReportStore);
             }
             if ($request->user()->cannot('store', AbsenceReport::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $club_session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $club_session->schedule->teacher_code != $requestTeacher->teacher_code) throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $absenceReport = $this->absenceReportRepository->create($requestData);
             $absenceReportResource = new AbsenceReportResource($absenceReport);
@@ -100,11 +105,14 @@ class AbsenceReportController extends Controller
             if (!$absenceReport) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AbsenceReportUpdate, Response::HTTP_NOT_FOUND);
             }
-            if ($request->user()->cannot('update', AbsenceReport::class)) {
+            if ($request->user()->cannot('update', $absenceReport)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $absenceReport->session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $absenceReport->session->schedule->teacher_code != $requestTeacher->teacher_code) {
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                }
             }
 
             $absenceReport = $this->absenceReportRepository->update($id, $requestData);
@@ -132,11 +140,14 @@ class AbsenceReportController extends Controller
             if (!$absenceReport) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AbsenceReportDelete, Response::HTTP_NOT_FOUND);
             }
-            if ($request->user()->cannot('destroy', AbsenceReport::class)) {
+            if ($request->user()->cannot('destroy', $absenceReport)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $absenceReport->session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $absenceReport->session->schedule->teacher_code != $requestTeacher->teacher_code) {
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                }
             }
             $this->absenceReportRepository->delete($id);
             DB::commit();
@@ -150,7 +161,7 @@ class AbsenceReportController extends Controller
     public function getBySession(string $id): JsonResponse
     {
         $absenceReports = $this->absenceReportRepository->getAbsenceReportList(array(
-            'session_id' => $id
+            'session_code' => $id
         ));
         return $this->sendResponse($absenceReports);
     }

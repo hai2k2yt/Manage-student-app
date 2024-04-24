@@ -3,23 +3,32 @@
 namespace App\Repositories;
 
 
-use App\Models\User;
+use App\Models\UserModel;
 
 class UserRepository extends BaseRepository
 {
     protected array $sortFields = [
         'name',
-        'username'
+        'username',
+        'role'
     ];
     protected array $filterFields = [
         'name',
         'name_like',
         'username',
-        'username_like'
+        'username_like',
+        'role'
     ];
 
     protected function getModel(): string
     {
-        return User::class;
+        return UserModel::class;
+    }
+
+    public function getUserList(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions);
     }
 }

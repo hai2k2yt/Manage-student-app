@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('clubs', function (Blueprint $table) {
 
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->string('club_code')->unique();
             $table->string('name');
-            $table->uuid('teacher_id')->nullable();
+            $table->string('teacher_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('teacher_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('teacher_code')->references('teacher_code')->on('teachers')->nullOnDelete();
         });
     }
 

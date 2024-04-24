@@ -7,11 +7,12 @@ use App\Models\ClubSchedule;
 class ClubScheduleRepository extends BaseRepository
 {
     protected array $sortFields = [
-
+        'schedule_code',
+        'day_of_week'
     ];
     protected array $filterFields = [
-        'club_id',
-        'teacher_id',
+        'club_code',
+        'teacher_code',
         'day_of_week'
     ];
 
@@ -24,11 +25,11 @@ class ClubScheduleRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions);
+        return $this->applyConditions($collection, $conditions, ['*'], ['club', 'teacher']);
     }
 
-    public function getClubSchedule(string $id)
+    public function getClubSchedule(string $schedule_code)
     {
-        return $this->find($id);
+        return $this->model->where('schedule_code', $schedule_code)->first();
     }
 }

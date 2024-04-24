@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('club_session_photos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('session_id');
+            $table->id();
+            $table->string('session_code');
             $table->string('photo_url');
             $table->timestamps();
 
-            $table->foreign('session_id')->references('id')->on('club_sessions');
+            $table->foreign('session_code')->references('session_code')->on('club_sessions');
         });
     }
 

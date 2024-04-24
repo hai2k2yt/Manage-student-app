@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Enums\RoleEnum;
 use App\Models\StudentClass;
+use App\Models\Teacher;
 use App\Models\User;
 
 class StudentClassPolicy
@@ -50,8 +51,12 @@ class StudentClassPolicy
     }
 
     public function assignStudents(User $user, StudentClass $studentClass) {
-        if ($user->role == RoleEnum::ADMIN) return true;
-        if($user->role == RoleEnum::TEACHER && $user->id == $studentClass->teacher_id) return true;
+        if ($user->role == RoleEnum::ADMIN->value) return true;
+        if ($user->role == RoleEnum::TEACHER->value) {
+            $teacher = Teacher::where('user_id', $user->id);
+            if (!$teacher) return false;
+            if ($teacher->teacher_code == $studentClass->teacher_code) return true;
+        }
         return false;
     }
 }

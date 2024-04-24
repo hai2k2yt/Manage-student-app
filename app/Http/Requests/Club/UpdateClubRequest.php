@@ -26,7 +26,7 @@ class UpdateClubRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|nullable|string|max:255',
-            'teacher_id' => 'sometimes|nullable|exists:users,id'
+            'teacher_code' => 'sometimes|nullable|exists:teachers,teacher_code'
         ];
     }
 
@@ -35,7 +35,7 @@ class UpdateClubRequest extends FormRequest
         return [
             'name.string' => __('validation.string'),
             'name.max' => __('validation.max'),
-            'teacher_id.exists' => __('validation.exists'),
+            'teacher_code.exists' => __('validation.exists'),
         ];
     }
 }

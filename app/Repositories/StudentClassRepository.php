@@ -7,11 +7,12 @@ use App\Models\StudentClass;
 class StudentClassRepository extends BaseRepository
 {
     protected array $sortFields = [
-        'class_name'
+        'class_code',
+        'class_name',
     ];
     protected array $filterFields = [
+        'class_code',
         'class_name_like',
-        'teacher_id'
     ];
 
     protected function getModel(): string
@@ -23,11 +24,12 @@ class StudentClassRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions, ['*'], ['students']);
+        return $this->applyConditions($collection, $conditions, ['*'], ['teacher']);
     }
 
-    public function getStudentClass(string $id)
+    public function getStudentClass(string $class_code)
     {
-        return $this->find($id, ['students']);
+        return $this->model->where('class_code', $class_code)->first();
+
     }
 }

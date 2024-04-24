@@ -7,12 +7,11 @@ use App\Models\Comment;
 class CommentRepository extends BaseRepository
 {
     protected array $sortFields = [
-        'rating'
     ];
+
     protected array $filterFields = [
-        'club_session_id',
-        'student_id',
-        'rating'
+        'session_code',
+        'student_code',
     ];
 
     protected function getModel(): string

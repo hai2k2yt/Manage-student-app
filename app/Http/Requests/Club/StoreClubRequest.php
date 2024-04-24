@@ -25,8 +25,9 @@ class StoreClubRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'club_code' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'teacher_id' => 'required|exists:users,id'
+            'teacher_code' => 'required|exists:teachers,teacher_code'
         ];
     }
 
@@ -36,8 +37,8 @@ class StoreClubRequest extends FormRequest
             'name.required' => __('validation.required'),
             'name.string' => __('validation.string'),
             'name.max' => __('validation.max'),
-            'teacher_id.required' => __('validation.required'),
-            'teacher_id.exists' => __('validation.exists'),
+            'teacher_code.required' => __('validation.required'),
+            'teacher_code.exists' => __('validation.exists'),
         ];
     }
 }

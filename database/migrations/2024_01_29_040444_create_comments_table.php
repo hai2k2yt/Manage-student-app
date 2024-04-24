@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('club_session_id');
-            $table->uuid('student_id');
-            $table->text('comment_text');
-            $table->integer('rating');
+            $table->id();
+            $table->string('session_code');
+            $table->string('student_code');
+            $table->text('content');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('club_session_id')->references('id')->on('club_sessions');
-            $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('session_code')->references('session_code')->on('club_sessions');
+            $table->foreign('student_code')->references('student_code')->on('students');
         });
     }
 

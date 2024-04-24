@@ -11,8 +11,8 @@ class AbsenceReportRepository extends BaseRepository
     ];
 
     protected array $filterFields = [
-        'club_session_id',
-        'student_id',
+        'session_code',
+        'student_code',
         'status'
     ];
 
@@ -25,6 +25,6 @@ class AbsenceReportRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions);
+        return $this->applyConditions($collection, $conditions, ['*'], ['student']);
     }
 }

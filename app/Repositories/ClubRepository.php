@@ -7,11 +7,13 @@ use App\Models\Club;
 class ClubRepository extends BaseRepository
 {
     protected array $sortFields = [
+        'club_code',
         'name'
     ];
     protected array $filterFields = [
+        'club_code_like',
         'name_like',
-        'teacher_id'
+        'teacher_code'
     ];
 
     protected function getModel(): string
@@ -23,11 +25,11 @@ class ClubRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions);
+        return $this->applyConditions($collection, $conditions, ['*'], ['teacher']);
     }
 
-    public function getClub(string $id)
+    public function getClub(string $club_code)
     {
-        return $this->find($id);
+        return $this->model->where('club_code', $club_code)->first();
     }
 }

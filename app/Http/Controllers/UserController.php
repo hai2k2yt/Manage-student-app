@@ -12,13 +12,16 @@ class UserController extends Controller
 {
     /**
      */
-    public function __construct()
+    public function __construct(
+        protected UserRepository $userRepository
+    )
     {
+
     }
 
     public function all(Request $request): JsonResponse
     {
-        $users = User::all();
+        $users = $this->userRepository->getAll();
         $records = UserResource::collection($users);
         return $this->sendResponse($records);
     }
@@ -28,8 +31,8 @@ class UserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $users = $this->userRepository->getAll();
-
+        $conditions = $request->all();
+        $users = $this->userRepository->getUserList($conditions);
         return $this->sendPaginationResponse($users, UserResource::collection($users));
     }
 

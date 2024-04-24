@@ -59,8 +59,10 @@ class CommentController extends Controller
         }
     }
 
-    public function getByClubSession(string $id) {
-        $comments = $this->commentRepository->getCommentList(['club_session_id' => $id]);
+    public function getByClubSession(Request $request, string $id): JsonResponse
+    {
+        $conditions = $request->all();
+        $comments = $this->commentRepository->getCommentList([...$conditions,'session_code' => $id]);
         return $this->sendPaginationResponse($comments, CommentResource::collection($comments));
     }
 

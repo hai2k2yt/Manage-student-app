@@ -25,20 +25,23 @@ class StoreStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'student_code' => 'required|string|max:255|unique:students,student_code',
             'name' => 'required|string|max:255',
             'user_id' => 'sometimes|nullable|exists:users,id',
-            'class_id' => 'sometimes|nullable|exists:classes,id'
+            'class_code' => 'sometimes|nullable|exists:classes,class_code'
         ];
     }
 
     public function messages(): array
     {
         return [
+            'student_code.required' => __('validation.required'),
+            'student_code.string' => __('validation.string'),
             'name.required' => __('validation.required'),
             'name.string' => __('validation.string'),
             'name.max' => __('validation.max'),
             'user_id.exists' => __('validation.exists'),
-            'class_id.exists' => __('validation.exists'),
+            'class_code.exists' => __('validation.exists'),
         ];
     }
 }

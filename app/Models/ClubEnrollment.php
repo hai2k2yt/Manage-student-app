@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-class ClubEnrollment extends BaseModel
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class ClubEnrollment extends Pivot
 {
-    protected $table = 'club_enrollment';
+    protected $table = 'club_enrollments';
 
     /**
      * The attributes that are mass assignable.
@@ -12,7 +14,7 @@ class ClubEnrollment extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'student_id',
-        'club_id'
+        'student_code',
+        'club_code'
     ];
 }

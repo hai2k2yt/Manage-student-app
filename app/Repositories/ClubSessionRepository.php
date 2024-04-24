@@ -15,7 +15,7 @@ class ClubSessionRepository extends BaseRepository
         'date',
         'date_gte',
         'date_lte',
-        'schedule_id'
+        'schedule_code'
     ];
 
     protected function getModel(): string
@@ -27,20 +27,20 @@ class ClubSessionRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions);
+        return $this->applyConditions($collection, $conditions,  ['*'], ['schedule.club', 'schedule.teacher']);
     }
 
-    public function getClubSession(string $id)
+    public function getClubSession(string $session_code)
     {
-        return $this->find($id);
+        return $this->model->where('session_code', $session_code)->first();
     }
 
-    public function getByClubId(string $id)
+    public function getByClubCode(string $id, array $conditions)
     {
-        $club_schedule_ids = ClubSchedule::where('club_id', $id)->pluck('id')->toArray();
+        $club_schedule_codes = ClubSchedule::where('club_code', $id)->pluck('schedule_code')->toArray();
 
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, ['schedule_id' => $club_schedule_ids]);
+        return $this->applyConditions($collection, [...$conditions, 'schedule_code' => $club_schedule_codes], ['*'], ['schedule.club', 'schedule.teacher']);
     }
 }

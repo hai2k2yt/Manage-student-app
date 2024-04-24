@@ -10,9 +10,11 @@ use App\Http\Requests\Attendance\UpdateAttendanceRequest;
 use App\Http\Requests\Attendance\UpdateManyAttendanceRequest;
 use App\Http\Resources\AttendanceResource;
 use App\Models\Attendance;
+use App\Models\Teacher;
 use App\Repositories\AttendanceRepository;
 use App\Repositories\ClubRepository;
 use App\Repositories\ClubSessionRepository;
+use App\Repositories\TeacherRepository;
 use Exception;
 use HttpException;
 use Illuminate\Http\JsonResponse;
@@ -26,11 +28,13 @@ class AttendanceController extends Controller
      * @param AttendanceRepository $attendanceRepository
      * @param ClubSessionRepository $clubSessionRepository
      * @param ClubRepository $clubRepository
+     * @param TeacherRepository $teacherRepository
      */
     public function __construct(
         protected AttendanceRepository  $attendanceRepository,
         protected ClubSessionRepository $clubSessionRepository,
-        protected ClubRepository        $clubRepository
+        protected ClubRepository        $clubRepository,
+        protected TeacherRepository     $teacherRepository
     )
     {
     }
@@ -60,22 +64,25 @@ class AttendanceController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $club_session_id = $requestData['club_session_id'];
-            $student_id = $requestData['student_id'];
-            $club_session = $this->clubSessionRepository->find($club_session_id);
-            $club_student_ids = $club_session->schedule->club->students->pluck('id')->toArray();
-            if (!in_array($student_id, $club_student_ids)) {
+            $session_code = $requestData['session_code'];
+            $student_code = $requestData['student_code'];
+            $club_session = $this->clubSessionRepository->getClubSession($session_code);
+            $club_student_codes = $club_session->schedule->club->students->pluck('student_code')->toArray();
+            if (!in_array($student_code, $club_student_codes)) {
                 return $this->sendError(__('student.existed'), ErrorCodeEnum::AttendanceStore);
             }
-            $attendance_student_ids = $club_session->attendance->pluck('id')->toArray();
-            if (in_array($student_id, $attendance_student_ids)) {
+            $attendance_student_codes = $club_session->attendance->pluck('student_code')->toArray();
+            if (in_array($student_code, $attendance_student_codes)) {
                 return $this->sendError(__('attendance.existed'), ErrorCodeEnum::AttendanceStore);
             }
             if ($request->user()->cannot('store', Attendance::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $club_session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $club_session->schedule->teacher_code != $requestTeacher->teacher_code) {
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                }
             }
             $attendance = $this->attendanceRepository->create($requestData);
             $attendanceResource = new AttendanceResource($attendance);
@@ -103,11 +110,14 @@ class AttendanceController extends Controller
             if (!$attendance) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AttendanceUpdate, Response::HTTP_NOT_FOUND);
             }
-            if ($request->user()->cannot('update', Attendance::class)) {
+            if ($request->user()->cannot('update', $attendance)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $attendance->session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $attendance->session->schedule->teacher_code != $requestTeacher->teacher_code) {
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                }
             }
             $attendance = $this->attendanceRepository->update($id, $requestData);
             $attendanceResource = new AttendanceResource($attendance);
@@ -130,50 +140,52 @@ class AttendanceController extends Controller
             $present = $requestData['present'];
             $permission_absence = $requestData['permission_absence'];
             $unexcused_absence = $requestData['unexcused_absence'];
-            $session = $this->clubSessionRepository->find($id);
+            $session = $this->clubSessionRepository->getClubSession($id);
             if (!$session) {
                 return $this->sendError(__('session.not_found'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_NOT_FOUND);
             }
-            $session_student_ids = $session->schedule->club->students->pluck('id')->toArray();
+            $session_student_codes = $session->schedule->club->students->pluck('student_code')->toArray();
             if ($request->user()->cannot('updateMany', Attendance::class)) {
                 return $this->sendError(__('common.forbidden'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $session->schedule->teacher_id != $request->user()->id) {
-                return $this->sendError(__('common.forbidden'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $session->schedule->teacher_id != $requestTeacher->teacher_code)
+                    return $this->sendError(__('common.forbidden'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_FORBIDDEN);
             }
-            $error_student_id = [];
-            foreach ($present as $student_id) {
-                if (!in_array($student_id, $session_student_ids)) {
-                    $error_student_id[] = $student_id;
+            $error_student_code = [];
+            foreach ($present as $student_code) {
+                if (!in_array($student_code, $session_student_codes)) {
+                    $error_student_code[] = $student_code;
                     continue;
                 }
                 $this->attendanceRepository->upsert(
-                    ['club_session_id' => $id, 'student_id' => $student_id, 'present' => AttendanceEnum::PRESENT->value],
-                    ['club_session_id', 'student_id'],
+                    ['session_code' => $id, 'student_code' => $student_code, 'present' => AttendanceEnum::PRESENT->value],
+                    ['session_code', 'student_code'],
                     ['present']);
             }
-            foreach ($permission_absence as $student_id) {
-                if (!in_array($student_id, $session_student_ids)) {
-                    $error_student_id[] = $student_id;
+            foreach ($permission_absence as $student_code) {
+                if (!in_array($student_code, $session_student_codes)) {
+                    $error_student_code[] = $student_code;
                     continue;
                 }
                 $this->attendanceRepository->upsert(
-                    ['club_session_id' => $id, 'student_id' => $student_id, 'present' => AttendanceEnum::PERMISSION_ABSENCE->value],
-                    ['club_session_id', 'student_id'],
+                    ['session_code' => $id, 'student_code' => $student_code, 'present' => AttendanceEnum::PERMISSION_ABSENCE->value],
+                    ['session_code', 'student_code'],
                     ['present']);
             }
-            foreach ($unexcused_absence as $student_id) {
-                if (!in_array($student_id, $session_student_ids)) {
-                    $error_student_id[] = $student_id;
+            foreach ($unexcused_absence as $student_code) {
+                if (!in_array($student_code, $session_student_codes)) {
+                    $error_student_code[] = $student_code;
                     continue;
                 }
                 $this->attendanceRepository->upsert(
-                    ['club_session_id' => $id, 'student_id' => $student_id, 'present' => AttendanceEnum::UNEXCUSED_ABSENCE],
-                    ['club_session_id', 'student_id'],
+                    ['session_code' => $id, 'student_code' => $student_code, 'present' => AttendanceEnum::UNEXCUSED_ABSENCE],
+                    ['session_code', 'student_code'],
                     ['present']);
             }
-            if (count($error_student_id)) {
-                return $this->sendError(__('attendance.not_found'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_NOT_FOUND, $error_student_id);
+            if (count($error_student_code)) {
+                return $this->sendError(__('attendance.not_found'), ErrorCodeEnum::AttendanceUpdateMany, Response::HTTP_NOT_FOUND, $error_student_code);
             }
             DB::commit();
             return $this->sendResponse('', __('common.updated'));
@@ -198,11 +210,13 @@ class AttendanceController extends Controller
             if (!$attendance) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::AttendanceDelete, Response::HTTP_NOT_FOUND);
             }
-            if ($request->user()->cannot('destroy', Attendance::class)) {
+            if ($request->user()->cannot('destroy', $attendance)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $attendance->session->schedule->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $attendance->session->schedule->teacher_id != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->attendanceRepository->delete($id);
             DB::commit();
@@ -213,29 +227,29 @@ class AttendanceController extends Controller
         }
     }
 
-    public function statisticStudents(string $club_id, string $student_id): JsonResponse
+    public function statisticStudents(string $club_code, string $student_code): JsonResponse
     {
         try {
-            $club = $this->clubRepository->find($club_id);
+            $club = $this->clubRepository->getClub($club_code);
             if (!$club) {
                 return $this->sendError(__('club.not_found'), ErrorCodeEnum::AttendanceStatisticStudent, Response::HTTP_NOT_FOUND);
             }
-            $session_ids = [];
-            $club->schedules->each(function ($schedule) use (&$session_ids) {
-                $schedule->sessions->each(function ($session) use (&$session_ids) {
-                    $session_ids[] = $session->id;
+            $session_codes = [];
+            $club->schedules->each(function ($schedule) use (&$session_codes) {
+                $schedule->sessions->each(function ($session) use (&$session_codes) {
+                    $session_codes[] = $session->session_code;
                 });
             });
 
-            $club_student_ids = $club->students->pluck('id')->toArray();
-            if (!in_array($student_id, $club_student_ids)) {
+            $club_student_codes = $club->students->pluck('student_code')->toArray();
+            if (!in_array($student_code, $club_student_codes)) {
                 return $this->sendError(__('club.not_have_student'), ErrorCodeEnum::AttendanceStatisticStudent, Response::HTTP_NOT_FOUND);
             }
 
             $attendances = $this->attendanceRepository->getAttendanceList(
                 [
-                    'club_session_id' => $session_ids,
-                    'student_id' => $student_id
+                    'session_code' => $session_codes,
+                    'student_code' => $student_code
                 ]
             )->pluck('present')->toArray();
 

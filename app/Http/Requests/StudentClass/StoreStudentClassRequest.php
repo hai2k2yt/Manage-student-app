@@ -25,8 +25,9 @@ class StoreStudentClassRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'class_code' => 'required|string|max:255|unique:classes,class_code',
             'class_name' => 'required|string|max:255',
-            'teacher_id' => 'required|exists:users,id'
+            'teacher_code' => 'required|exists:teachers,teacher_code'
         ];
     }
 
@@ -36,8 +37,8 @@ class StoreStudentClassRequest extends FormRequest
             'class_name.required' => __('validation.required'),
             'class_name.string' => __('validation.string'),
             'class_name.max' => __('validation.max'),
-            'teacher_id.required' => __('validation.required'),
-            'teacher_id.exists' => __('validation.exists'),
+            'teacher_code.required' => __('validation.required'),
+            'teacher_code.exists' => __('validation.exists'),
         ];
     }
 }

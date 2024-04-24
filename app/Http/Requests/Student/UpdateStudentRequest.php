@@ -27,7 +27,7 @@ class UpdateStudentRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'user_id' => 'nullable|exists:users,id',
-            'class_id' => 'nullable|exists:classes,id'
+            'class_code' => 'nullable|exists:classes,class_code'
         ];
     }
 
@@ -37,7 +37,7 @@ class UpdateStudentRequest extends FormRequest
             'name.string' => __('validation.string'),
             'name.max' => __('validation.max'),
             'user_id.exists' => __('validation.exists'),
-            'class_id.exists' => __('validation.exists'),
+            'class_code.exists' => __('validation.exists'),
         ];
     }
 }

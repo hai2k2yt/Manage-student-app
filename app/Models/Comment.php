@@ -16,14 +16,13 @@ class Comment extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'club_session_id',
-        'student_id',
-        'comment_text',
-        'rating'
+        'session_code',
+        'student_code',
+        'content'
     ];
 
     public function session(): BelongsTo
     {
-        return $this->belongsTo(ClubSession::class);
+        return $this->belongsTo(ClubSession::class, 'session_code', 'session_code');
     }
 }

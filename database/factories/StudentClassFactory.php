@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\RoleEnum;
 use App\Models\StudentClass;
+use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +21,9 @@ class StudentClassFactory extends Factory
     public function definition(): array
     {
         return [
+            'class_code' => fake()->unique()->words(),
             'class_name' => 'class' . fake()->time(),
-            'teacher_id' => User::where('role', RoleEnum::TEACHER)->pluck('id')->random()
+            'teacher_code' => Teacher::pluck('teacher_code')->random()
         ];
     }
 }

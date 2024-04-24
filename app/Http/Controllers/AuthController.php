@@ -31,7 +31,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login()
+    public function login(): JsonResponse
     {
         $credentials = request(['username', 'password']);
 
@@ -120,6 +120,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'access_token' => $token,
+            'user' => auth()->user(),
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);

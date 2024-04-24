@@ -91,13 +91,13 @@ class StudentClassController extends Controller
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
-            $student = $this->studentClassRepository->find($id);
+            $student = $this->studentClassRepository->getStudentClass($id);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentUpdate, Response::HTTP_NOT_FOUND);
             }
 
-            $student = $this->studentClassRepository->update($id, $requestData);
-            $studentClassResource = new StudentClassResource($student);
+            $studentRes = $this->studentClassRepository->update($student->id, $requestData);
+            $studentClassResource = new StudentClassResource($studentRes);
             DB::commit();
             return $this->sendResponse($studentClassResource, __('common.updated'));
         } catch (Exception $error) {
@@ -109,6 +109,7 @@ class StudentClassController extends Controller
     /**
      * Delete corporation department.
      *
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      */
@@ -119,11 +120,11 @@ class StudentClassController extends Controller
             if ($request->user()->cannot('destroy', StudentClass::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $studentClass = $this->studentClassRepository->find($id);
+            $studentClass = $this->studentClassRepository->getStudentClass($id);
             if (!$studentClass) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClassDelete, Response::HTTP_NOT_FOUND);
             }
-            $this->studentClassRepository->delete($id);
+            $this->studentClassRepository->delete($studentClass->id);
             DB::commit();
             return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
         } catch (\Exception $error) {
@@ -137,9 +138,9 @@ class StudentClassController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $student_ids = $requestData->student_ids;
-            $class_id = $requestData->class_id;
-            $class = $this->studentClassRepository->find($class_id);
+            $student_codes = $requestData['student_codes'];
+            $class_code = $requestData['class_code'];
+            $class = $this->studentClassRepository->getStudentClass($class_code);
             if (!$class) {
                 return $this->sendResponse('common.not_found', __('common.updated'));
             }
@@ -150,15 +151,17 @@ class StudentClassController extends Controller
                 "update_success" => [],
                 "not_found" => [],
             ];
-            foreach ($student_ids as $id) {
-                $student = $this->studentRepository->find($id);
+            foreach ($student_codes as $student_code) {
+                $student = $this->studentRepository->getStudent($student_code);
                 if (!$student) {
-                    $response["not_found"][] = $id;
+                    $response["not_found"][] = $student_code;
                     break;
                 }
-                $this->studentRepository->update($id,
-                    array('class_id' => $class_id));
-                $response["update_success"][] = $id;
+                $this->studentRepository->update(
+                    $student_code,
+                    array('class_code' => $class_code)
+                );
+                $response["update_success"][] = $student_code;
             }
             DB::commit();
             return $this->sendResponse($response, __('common.updated'));

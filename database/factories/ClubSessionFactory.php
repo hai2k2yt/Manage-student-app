@@ -19,8 +19,8 @@ class ClubSessionFactory extends Factory
     public function definition(): array
     {
         return [
-            'schedule_id' => ClubSchedule::pluck('id')->random(),
-            'date' => fake()->dateTime(),
+            'schedule_code' => ClubSchedule::pluck('schedule_code')->random(),
+            'date' => fake()->date(),
         ];
     }
 }

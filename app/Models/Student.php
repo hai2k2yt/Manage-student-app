@@ -18,19 +18,20 @@ class Student extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
+        'student_code',
         'name',
         'user_id',
-        'class_id'
+        'class_code'
     ];
 
     public function class(): BelongsTo
     {
-        return $this->belongsTo(StudentClass::class, 'class_id', 'id');
+        return $this->belongsTo(StudentClass::class, 'class_code', 'class_code');
     }
 
     public function clubs(): BelongsToMany
     {
-        return $this->belongsToMany(Club::class, 'club_enrollment', 'student_id', 'club_id');
+        return $this->belongsToMany(Club::class, 'club_enrollments', 'student_code', 'club_code', 'student_code', 'club_code');
     }
 
     public function notification(): MorphOne

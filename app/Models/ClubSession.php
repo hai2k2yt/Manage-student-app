@@ -17,32 +17,34 @@ class ClubSession extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'schedule_id',
+        'session_code',
+        'session_name',
+        'schedule_code',
         'date'
     ];
 
     public function schedule(): BelongsTo
     {
-        return $this->belongsTo(ClubSchedule::class, 'schedule_id');
+        return $this->belongsTo(ClubSchedule::class, 'schedule_code', 'schedule_code');
     }
 
     public function absence_reports(): HasMany
     {
-        return $this->hasMany(AbsenceReport::class, 'club_session_id');
+        return $this->hasMany(AbsenceReport::class, 'session_code', 'session_code');
     }
 
     public function attendances(): HasMany
     {
-        return $this->hasMany(Attendance::class, 'club_session_id');
+        return $this->hasMany(Attendance::class, 'session_code', 'session_code');
     }
 
     public function photos(): HasMany
     {
-        return $this->hasMany(ClubSessionPhoto::class, 'session_id');
+        return $this->hasMany(ClubSessionPhoto::class, 'session_code', 'session_code');
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'session_id');
+        return $this->hasMany(Comment::class, 'session_code', 'session_code');
     }
 }

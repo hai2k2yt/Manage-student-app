@@ -86,12 +86,12 @@ class StudentController extends Controller
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
-            $student = $this->studentRepository->find($id);
+            $student = $this->studentRepository->getStudent($id);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentUpdate, Response::HTTP_NOT_FOUND);
             }
 
-            $student = $this->studentRepository->update($id, $requestData);
+            $student = $this->studentRepository->update($student->id, $requestData);
             $studentResource = new StudentResource($student);
             DB::commit();
             return $this->sendResponse($studentResource, __('common.updated'));
@@ -115,11 +115,11 @@ class StudentController extends Controller
             if($request->user()->cannot('destroy', Student::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $student = $this->studentRepository->find($id);
+            $student = $this->studentRepository->getStudent($id);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentDelete, Response::HTTP_NOT_FOUND);
             }
-            $this->studentRepository->delete($id);
+            $this->studentRepository->delete($student->id);
             DB::commit();
             return $this->sendResponse(null, __('common.deleted'));
         } catch (\Exception $error) {

@@ -25,16 +25,14 @@ class UpdateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment_text' => 'nullable|string',
-            'rating' => 'nullable|integer'
+            'content' => 'nullable|string',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'comment_text.string' => __('validation.string'),
-            'rating.integer' => __('validation.integer')
+            'content.string' => __('validation.string'),
         ];
     }
 }

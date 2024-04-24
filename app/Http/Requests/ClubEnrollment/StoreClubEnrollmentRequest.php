@@ -25,18 +25,18 @@ class StoreClubEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'required|exists:students,id',
-            'club_id' => 'required|exists:clubs,id'
+            'student_code' => 'required|exists:students,student_code',
+            'club_code' => 'required|exists:clubs,club_code'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'student_id.required' => __('validation.required'),
-            'student_id.exists' => __('validation.exists'),
-            'club_id.required' => __('validation.required'),
-            'club_id.exists' => __('validation.exists'),
+            'student_code.required' => __('validation.required'),
+            'student_code.exists' => __('validation.exists'),
+            'club_code.required' => __('validation.required'),
+            'club_code.exists' => __('validation.exists'),
         ];
     }
 }

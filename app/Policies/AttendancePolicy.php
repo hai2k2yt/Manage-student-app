@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\RoleEnum;
 use App\Models\Attendance;
 use App\Models\ClubSession;
+use App\Models\Teacher;
 use App\Models\User;
 
 class AttendancePolicy
@@ -40,9 +41,11 @@ class AttendancePolicy
     public function update(User $user, Attendance $attendance): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value && $user->id == $attendance->session->teacher_id) return true;
-
-
+        if ($user->role == RoleEnum::TEACHER->value) {
+            $teacher = Teacher::where('user_id', $user->id);
+            if (!$teacher) return false;
+            if ($teacher->teacher_code == $attendance->session->teacher_code) return true;
+        }
         return false;
     }
 
@@ -69,7 +72,11 @@ class AttendancePolicy
     public function destroy(User $user, Attendance $attendance): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value && $user->id == $attendance->session->teacher_id) return true;
+        if ($user->role == RoleEnum::TEACHER->value) {
+            $teacher = Teacher::where('user_id', $user->id);
+            if (!$teacher) return false;
+            if ($teacher->teacher_code == $attendance->session->teacher_code) return true;
+        }
         return false;
     }
 }

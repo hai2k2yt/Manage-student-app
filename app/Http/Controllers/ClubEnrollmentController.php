@@ -13,6 +13,7 @@ use App\Models\ClubEnrollment;
 use App\Repositories\ClubEnrollmentRepository;
 use App\Repositories\ClubRepository;
 use App\Repositories\StudentRepository;
+use App\Repositories\TeacherRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,11 +27,13 @@ class ClubEnrollmentController extends Controller
      * @param ClubEnrollmentRepository $clubEnrollmentRepository
      * @param ClubRepository $clubRepository
      * @param StudentRepository $studentRepository
+     * @param TeacherRepository $teacherRepository
      */
     public function __construct(
         protected ClubEnrollmentRepository $clubEnrollmentRepository,
         protected ClubRepository           $clubRepository,
-        protected StudentRepository        $studentRepository
+        protected StudentRepository        $studentRepository,
+        protected TeacherRepository        $teacherRepository
     )
     {
     }
@@ -60,17 +63,20 @@ class ClubEnrollmentController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $club_id = $requestData['club_id'];
-            $club = $this->clubRepository->find($club_id);
+            $club_code = $requestData['club_code'];
+            $student_code = $requestData['student_code'];
+            $club = $this->clubRepository->getClub($club_code);
 
-            if (ClubEnrollment::where('club_id', $club_id)->where('teacher_id', $request->user()->id)) {
+            if (ClubEnrollment::where('club_code', $club_code)->where('student_code', $student_code)) {
                 return $this->sendError(__('common.existed'), ErrorCodeEnum::ClubEnrollmentStore);
             }
             if ($request->user()->cannot('store', ClubEnrollment::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $club->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $clubEnrollment = $this->clubEnrollmentRepository->create($requestData);
             $clubEnrollmentResource = new ClubEnrollmentResource($clubEnrollment);
@@ -97,16 +103,18 @@ class ClubEnrollmentController extends Controller
             if (!$clubEnrollment) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubEnrollmentDelete, Response::HTTP_NOT_FOUND);
             }
-            $club_id = $clubEnrollment->club_id;
-            $club = $this->clubRepository->find($club_id);
+            $club_code = $clubEnrollment->club_code;
+            $club = $this->clubRepository->getClub($club_code);
             if (!$club) {
                 return $this->sendError(__('club.not_found'), ErrorCodeEnum::ClubEnrollmentDelete, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('destroy', ClubEnrollment::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $club->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->clubEnrollmentRepository->delete($id);
             DB::commit();
@@ -122,33 +130,35 @@ class ClubEnrollmentController extends Controller
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $club_id = $requestData['club_id'];
-            $club = $this->clubRepository->find($club_id);
+            $club_code = $requestData['club_code'];
+            $club = $this->clubRepository->getClub($club_code);
             if ($request->user()->cannot('assignStudents', ClubEnrollment::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            if ($request->user()->role == RoleEnum::TEACHER->value && $club->teacher_id != $request->user()->id) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+            if ($request->user()->role == RoleEnum::TEACHER->value) {
+                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
+                if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
+                    throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $student_ids = $requestData->student_ids;
+            $student_codes = $requestData['student_codes'];
             $response = [
                 'success' => [],
                 'not_found' => [],
                 'existed' => []
             ];
 
-            foreach ($student_ids as $id) {
-                $student = $this->studentRepository->find($id);
+            foreach ($student_codes as $student_code) {
+                $student = $this->studentRepository->getStudent($student_code);
                 if (!$student) {
-                    $response['not_found'][] = $id;
+                    $response['not_found'][] = $student_code;
                     break;
                 }
-                $registered = $this->clubEnrollmentRepository->getByConditions(array('student_id' => $id, 'club_id' => $club_id));
+                $registered = $this->clubEnrollmentRepository->getByConditions(array('student_code' => $student_code, 'club_code' => $club_code));
                 if ($registered) {
-                    $this->clubEnrollmentRepository->create(array('student_id' => $id, 'club_id' => $club_id));
-                    $response['success'][] = $id;
+                    $this->clubEnrollmentRepository->create(array('student_code' => $student_code, 'club_code' => $club_code));
+                    $response['success'][] = $student_code;
                 } else {
-                    $response['existed'][] = $id;
+                    $response['existed'][] = $student_code;
                 }
             }
             DB::commit();

@@ -25,17 +25,16 @@ class UpdateClubSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schedule_id' => 'required|exists:club_schedules,id',
-            'date' => 'required|date',
+            'session_name' => 'nullable|string|max:255',
+            'schedule_code' => 'nullable|exists:club_schedules,schedule_code',
+            'date' => 'nullable|date',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'schedule_id.required' => __('validation.required'),
-            'schedule_id.exists' => __('validation.exists'),
-            'date.required' => __('validation.required'),
+            'schedule_code.exists' => __('validation.exists'),
             'date.date' => __('validation.date'),
         ];
     }

@@ -16,15 +16,16 @@ class ClubEnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $student_ids = Student::pluck('id')->all();
-        $club_ids = Club::pluck('id')->all();
-        foreach ($student_ids as $id) {
-            $random_club_ids = Arr::random($club_ids, 3);
+        $student_codes = Student::pluck('student_code')->all();
+        $club_codes = Club::pluck('club_code')->all();
+        foreach ($student_codes as $code) {
+            $random_count = rand(2, 4);
+            $random_club_ids = Arr::random($club_codes, $random_count);
             foreach ($random_club_ids as $club_id) {
                 ClubEnrollment::create(
                     array(
-                        'student_id' => $id,
-                        'club_id' => $club_id,
+                        'student_code' => $code,
+                        'club_code' => $club_id,
                     ));
             }
         }

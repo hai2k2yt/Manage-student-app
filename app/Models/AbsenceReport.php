@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AbsenceReport extends BaseModel
 {
-    protected $table = 'absence_report';
+    protected $table = 'absence_reports';
 
     /**
      * The attributes that are mass assignable.
@@ -16,14 +16,19 @@ class AbsenceReport extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'club_session_id',
-        'student_id',
+        'session_code',
+        'student_code',
         'reason',
         'status',
     ];
 
     public function session(): BelongsTo
     {
-        return $this->belongsTo(ClubSession::class);
+        return $this->belongsTo(ClubSession::class, 'session_code', 'session_code');
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_code', 'student_code');
     }
 }

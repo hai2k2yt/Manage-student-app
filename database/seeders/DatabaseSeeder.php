@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ClubSeeder::class,
             ClubEnrollmentSeeder::class,
             ClubScheduleSeeder::class,
+            ClubScheduleFeeSeeder::class,
             ClubSessionSeeder::class,
             AttendanceSeeder::class,
             AbsenceReportSeeder::class,

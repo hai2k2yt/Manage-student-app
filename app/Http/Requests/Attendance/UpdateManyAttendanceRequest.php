@@ -26,11 +26,11 @@ class UpdateManyAttendanceRequest extends FormRequest
     {
         return [
             'present' => 'nullable|array',
-            'present.*' => 'exists:students,id',
+            'present.*' => 'exists:students,student_code',
             'permission_absence' => 'nullable|array',
-            'permission_absence.*' => 'exists:students,id',
+            'permission_absence.*' => 'exists:students,student_code',
             'unexcused_absence' => 'nullable|array',
-            'unexcused_absence.*' => 'exists:students,id'
+            'unexcused_absence.*' => 'exists:students,student_code'
 
         ];
     }

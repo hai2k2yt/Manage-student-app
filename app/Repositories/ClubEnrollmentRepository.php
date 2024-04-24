@@ -15,8 +15,8 @@ class ClubEnrollmentRepository extends BaseRepository
     ];
 
     protected array $filterFields = [
-        'student_id',
-        'club_id'
+        'student_code',
+        'club_code'
     ];
 
     /**

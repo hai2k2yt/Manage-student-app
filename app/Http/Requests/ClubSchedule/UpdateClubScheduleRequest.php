@@ -25,25 +25,19 @@ class UpdateClubScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_id' => 'required|exists:clubs,id',
-            'teacher_id' => 'nullable|exists:users,id',
+            'schedule_name' => 'nullable|string|max:255',
+            'club_code' => 'nullable|exists:clubs,club_code',
+            'teacher_code' => 'nullable|exists:teachers,teacher_code',
             'day_of_week' => 'nullable|in:1,2,3,4,5,6,7',
-            'start_time' => 'nullable|date_format:H:i|before:end_time',
-            'end_time' => 'nullable|date_format:H:i|after:start_time',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'club_id.required' => __('validation.required'),
-            'club_id.exists' => __('validation.exists'),
-            'teacher_id.exists' => __('validation.exists'),
+            'club_code.exists' => __('validation.exists'),
+            'teacher_code.exists' => __('validation.exists'),
             'day_of_week.in' => __('validation.in'),
-            'start_time.date_format' => __('validation.date_format'),
-            'start_time.before' => __('validation.before'),
-            'end_time.date_format' => __('validation.date_format'),
-            'end_time.after' => __('validation.after'),
         ];
     }
 }

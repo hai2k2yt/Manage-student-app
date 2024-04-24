@@ -16,13 +16,18 @@ class Attendance extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'club_session_id',
-        'student_id',
+        'session_code',
+        'student_code',
         'present'
     ];
 
     public function session(): BelongsTo
     {
-        return $this->belongsTo(ClubSession::class);
+        return $this->belongsTo(ClubSession::class, 'session_code', 'session_code');
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_code', 'student_code');
     }
 }

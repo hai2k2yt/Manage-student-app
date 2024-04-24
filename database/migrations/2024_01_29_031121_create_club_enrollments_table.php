@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_enrollment', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('student_id');
-            $table->uuid('club_id');
+        Schema::create('club_enrollments', function (Blueprint $table) {
+            $table->id();
+            $table->string('student_code');
+            $table->string('club_code');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('student_id')->references('id')->on('students')->null;
-            $table->foreign('club_id')->references('id')->on('clubs');
+            $table->foreign('student_code')->references('student_code')->on('students');
+            $table->foreign('club_code')->references('club_code')->on('clubs');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_enrollment');
+        Schema::dropIfExists('club_enrollments');
     }
 };

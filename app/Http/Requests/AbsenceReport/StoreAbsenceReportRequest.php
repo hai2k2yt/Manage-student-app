@@ -27,8 +27,8 @@ class StoreAbsenceReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_session_id' => 'required|exists:club_sessions,id',
-            'student_id' => 'required|exists:students,id',
+            'session_code' => 'required|exists:club_sessions,session_code',
+            'student_code' => 'required|exists:students,student_code',
             'reason' => 'required|string',
             'status' => [
                 'required',
@@ -40,10 +40,10 @@ class StoreAbsenceReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'club_session_id.required' => __('validation.required'),
-            'club_session_id.exists' => __('validation.exists'),
-            'student_id.required' => __('validation.required'),
-            'student_id.exists' => __('validation.exists'),
+            'session_code.required' => __('validation.required'),
+            'session_code.exists' => __('validation.exists'),
+            'student_code.required' => __('validation.required'),
+            'student_code.exists' => __('validation.exists'),
             'reason.required' => __('validation.required'),
             'reason.string' => __('validation.string'),
             'status.required' => __('validation.required'),
