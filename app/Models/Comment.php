@@ -25,4 +25,9 @@ class Comment extends BaseModel
     {
         return $this->belongsTo(ClubSession::class, 'session_code', 'session_code');
     }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_code', 'student_code');
+    }
 }

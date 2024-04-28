@@ -7,6 +7,7 @@ use App\Models\Attendance;
 class AttendanceRepository extends BaseRepository
 {
     protected array $sortFields = [
+        'student_code',
         'present'
     ];
 

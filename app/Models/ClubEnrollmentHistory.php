@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ClubScheduleFee extends BaseModel
+class ClubEnrollmentHistory extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -14,15 +14,15 @@ class ClubScheduleFee extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
-        'schedule_code',
-        'student_fee',
-        'teacher_fee'
+        'club_enrollment_id',
+        'from',
+        'to',
+        'status',
     ];
 
-    protected $table = 'club_schedule_fees';
+    protected $table = 'club_enrollment_histories';
 
-    public function schedule(): BelongsTo {
-        return $this->belongsTo(ClubSchedule::class, 'schedule_code', 'schedule_code');
+    public function club_enrollment(): BelongsTo {
+        return $this->belongsTo(ClubEnrollment::class, 'club_enrollment_id', 'id');
     }
-
 }

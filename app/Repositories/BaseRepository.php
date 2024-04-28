@@ -25,7 +25,7 @@ abstract class BaseRepository
     private string $searchLikePrefix = '_like';
     private array $orderValues = ['desc', 'asc'];
 
-    protected BaseModel $model;
+    protected Model $model;
 
     public function __construct()
     {

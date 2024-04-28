@@ -10,6 +10,7 @@ use App\Http\Controllers\ClubSessionController;
 use App\Http\Controllers\ClubSessionPhotoController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -88,6 +89,7 @@ Route::middleware('api')->group(function () {
             Route::get('/all', [ClubEnrollmentController::class, 'all'])->name('all');
             Route::get('', [ClubEnrollmentController::class, 'index'])->name('index');
             Route::post('', [ClubEnrollmentController::class, 'store'])->name('store');
+            Route::post('/cancel', [ClubEnrollmentController::class, 'cancelEnrollment'])->name('cancelEnrollment');
             Route::delete('/{id?}', [ClubEnrollmentController::class, 'destroy'])->name('destroy');
             Route::post('/assign-students', [ClubEnrollmentController::class, 'assignStudents'])->name('assignStudents');
 
@@ -148,6 +150,7 @@ Route::middleware('api')->group(function () {
             Route::get('/all', [CommentController::class, 'all'])->name('all');
             Route::get('', [CommentController::class, 'index'])->name('index');
             Route::post('', [CommentController::class, 'store'])->name('store');
+            Route::get('/{id?}', [CommentController::class, 'show'])->name('show');
             Route::get('/club-session/{id}', [CommentController::class, 'getByClubSession'])->name('getByClubSession');
             Route::put('/{id?}', [CommentController::class, 'update'])->name('update');
             Route::delete('/{id?}', [CommentController::class, 'destroy'])->name('destroy');
@@ -159,6 +162,11 @@ Route::middleware('api')->group(function () {
             Route::post('', [NotificationController::class, 'store'])->name('store');
             Route::put('/{id?}', [NotificationController::class, 'update'])->name('update');
             Route::delete('/{id?}', [NotificationController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('statistic')->group(function () {
+            Route::get('/student-fee', [StatisticController::class, 'statisticStudentFee'])->name('statisticStudentFee');
+            Route::get('/teacher-fee', [StatisticController::class, 'statisticTeacherFee'])->name('statisticTeacherFee');
         });
     });
 });

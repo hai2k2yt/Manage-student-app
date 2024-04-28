@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('club_schedule_fees', function (Blueprint $table) {
             $table->id();
             $table->string('schedule_code')->nullable();
-            $table->unsignedInteger('club_teacher_fee');
-            $table->unsignedInteger('class_teacher_fee');
+            $table->unsignedInteger('student_fee');
+            $table->unsignedInteger('teacher_fee');
             $table->timestamps();
             $table->softDeletes();
 

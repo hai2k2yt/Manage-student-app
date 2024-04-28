@@ -72,11 +72,11 @@ class ClubSessionPhotoController extends Controller
                 if (!$requestTeacher && $club_session->schedule->teacher_code != $requestTeacher->teacher_code)
                     throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $path = Storage::putFile('local', $requestData['photo_url'], 'local');
+            $path = Storage::putFile('session-photo', $requestData['photo_url'], 'public');
 
             $clubSessionPhoto = $this->clubSessionPhotoRepository->create([
                 "session_code" => $session_code,
-                "photo_url" => $path
+                "photo_url" => 'storage/' . $path
             ]);
             $clubSessionPhotoResource = new ClubSessionPhotoResource($clubSessionPhoto);
             DB::commit();

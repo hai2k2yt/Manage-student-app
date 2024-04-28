@@ -7,6 +7,7 @@ use App\Models\AbsenceReport;
 class AbsenceReportRepository extends BaseRepository
 {
     protected array $sortFields = [
+        'student_code',
         'status'
     ];
 

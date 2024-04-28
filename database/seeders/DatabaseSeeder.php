@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ClubEnrollmentHistory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,10 +15,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            TeacherSeeder::class,
             StudentClassSeeder::class,
             StudentSeeder::class,
             ClubSeeder::class,
             ClubEnrollmentSeeder::class,
+            ClubEnrollmentHistorySeeder::class,
             ClubScheduleSeeder::class,
             ClubScheduleFeeSeeder::class,
             ClubSessionSeeder::class,

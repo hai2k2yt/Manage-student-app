@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_enrollments', function (Blueprint $table) {
+        Schema::create('club_enrollment_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('student_code');
-            $table->string('club_code');
+            $table->foreignId('club_enrollment_id')->nullable();
+            $table->date('from');
+            $table->date('to')->nullable();
             $table->integer('status');
             $table->timestamps();
-            $table->softDeletes();
 
-            $table->foreign('student_code')->references('student_code')->on('students');
-            $table->foreign('club_code')->references('club_code')->on('clubs');
+            $table->foreign('club_enrollment_id')->references('id')->on('club_enrollments')->nullOnDelete();
+
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_enrollments');
+        Schema::dropIfExists('club_enrollment_histories');
     }
 };

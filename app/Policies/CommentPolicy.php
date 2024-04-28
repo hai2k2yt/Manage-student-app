@@ -22,7 +22,6 @@ class CommentPolicy
      * Determine whether the user can create the model.
      *
      * @param User $user
-     * @param ClubSession $clubSession
      * @return bool
      */
     public function store(User $user): bool

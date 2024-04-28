@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ClubEnrollmentStatusEnum;
 use App\Models\Club;
 use App\Models\ClubEnrollment;
 use App\Models\Student;
@@ -26,6 +27,7 @@ class ClubEnrollmentSeeder extends Seeder
                     array(
                         'student_code' => $code,
                         'club_code' => $club_id,
+                        'status' => ClubEnrollmentStatusEnum::STUDY
                     ));
             }
         }

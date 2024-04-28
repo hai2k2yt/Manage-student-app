@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ClubEnrollmentStatusEnum;
 use App\Enums\ErrorCodeEnum;
 use App\Enums\RoleEnum;
 use App\Http\Requests\ClubEnrollment\AssignStudentToClubRequest;
+use App\Http\Requests\ClubEnrollment\CancelClubEnrollmentRequest;
 use App\Http\Requests\ClubEnrollment\StoreClubEnrollmentRequest;
 use App\Http\Requests\ClubEnrollment\UpdateClubEnrollmentRequest;
 use App\Http\Resources\ClubEnrollmentResource;
 use App\Models\Club;
 use App\Models\ClubEnrollment;
+use App\Models\ClubEnrollmentHistory;
 use App\Repositories\ClubEnrollmentRepository;
 use App\Repositories\ClubRepository;
 use App\Repositories\StudentRepository;
@@ -65,11 +68,10 @@ class ClubEnrollmentController extends Controller
             $requestData = $request->validated();
             $club_code = $requestData['club_code'];
             $student_code = $requestData['student_code'];
+            $from = $requestData['from'];
+
             $club = $this->clubRepository->getClub($club_code);
 
-            if (ClubEnrollment::where('club_code', $club_code)->where('student_code', $student_code)) {
-                return $this->sendError(__('common.existed'), ErrorCodeEnum::ClubEnrollmentStore);
-            }
             if ($request->user()->cannot('store', ClubEnrollment::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
@@ -78,13 +80,86 @@ class ClubEnrollmentController extends Controller
                 if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
                     throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $clubEnrollment = $this->clubEnrollmentRepository->create($requestData);
-            $clubEnrollmentResource = new ClubEnrollmentResource($clubEnrollment);
+
+            $currentEnrollments =
+                ClubEnrollment::where('club_code', $club_code)
+                    ->where('student_code', $student_code)->get();
+
+            // Not registered before
+            if (!$currentEnrollments) {
+                $clubEnrollment = $this->clubEnrollmentRepository->create([
+                    'club_code' => $club_code,
+                    'student_code' => $student_code,
+                    'status' => ClubEnrollmentStatusEnum::STUDY
+                ]);
+                ClubEnrollmentHistory::create([
+                    'club_enrollment_id' => $clubEnrollment->id,
+                    'from' => $from
+                ]);
+
+                DB::commit();
+                return $this->sendResponse(null, __('common.created'), Response::HTTP_CREATED);
+            }
+
+            // Registered before
+            // Studying
+            if ($currentEnrollments->status == ClubEnrollmentStatusEnum::STUDY) {
+                return $this->sendError(__('common.existed'), ErrorCodeEnum::ClubEnrollmentStore, Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            $currentEnrollments->update([
+               'status' => ClubEnrollmentStatusEnum::STUDY
+            ]);
+            //Absence
+            $enrollment_history =
+                ClubEnrollmentHistory::where('club_enrollment_id', $currentEnrollments->id)
+                    ->where('from', '>=', date($from))
+                    ->where('to', '<=', date($from))
+                    ->get();
+
+            if ($enrollment_history) {
+                return $this->sendError(__('enrollment.date_not_valid'), ErrorCodeEnum::ClubEnrollmentStore);
+            }
+            ClubEnrollmentHistory::create([
+                'club_enrollment_id' => $currentEnrollments->id,
+                'from' => $from
+            ]);
             DB::commit();
-            return $this->sendResponse($clubEnrollmentResource, __('common.created'), Response::HTTP_CREATED);
+            return $this->sendResponse(null, __('common.created'), Response::HTTP_CREATED);
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClubEnrollmentStore);
+        }
+    }
+
+    public function cancelEnrollment(CancelClubEnrollmentRequest $request) {
+        DB::beginTransaction();
+        try {
+            $requestData = $request->validated();
+            $to = $requestData['to'];
+            $club_enrollment_id = $requestData['club_enrollment_id'];
+            $club_enrollment = $this->clubEnrollmentRepository->find($club_enrollment_id);
+            if ($request->user()->cannot('cancel', $club_enrollment)) {
+                throw new HttpException(Response::HTTP_FORBIDDEN);
+            }
+            if($club_enrollment->status == ClubEnrollmentStatusEnum::ABSENCE) {
+                return $this->sendError(__('enrollment.absenced'), ErrorCodeEnum::ClubEnrollmentCancel);
+            }
+            $enrollment_histories_check = ClubEnrollmentHistory
+                ::where('club_enrollment_id', $club_enrollment_id)
+                ->where('from', '<=', date($to))
+                ->where('to', '>=', date($to))
+                ->where('status', ClubEnrollmentStatusEnum::ABSENCE)->get();
+            if($enrollment_histories_check) {
+                return $this->sendError(__('enrollment.to.not_valid'), ErrorCodeEnum::ClubEnrollmentCancel);
+            }
+            $this->clubEnrollmentRepository->update($club_enrollment_id, ['status' => ClubEnrollmentStatusEnum::ABSENCE]);
+            $current_enrollment_history = ClubEnrollmentHistory::where('status', ClubEnrollmentStatusEnum::STUDY)->get();
+            $current_enrollment_history->update(['status' => ClubEnrollmentStatusEnum::ABSENCE, 'to' => $to]);
+            DB::commit();
+            return $this->sendResponse(null, __('common.updated'));
+        } catch (Exception $error) {
+            DB::rollBack();
+            return $this->sendExceptionError($error, ErrorCodeEnum::ClubEnrollmentCancel);
         }
     }
 

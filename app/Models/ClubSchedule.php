@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ClubSchedule extends BaseModel
 {
@@ -34,5 +35,9 @@ class ClubSchedule extends BaseModel
 
     public function sessions(): HasMany {
         return $this->hasMany(ClubSession::class, 'schedule_code', 'schedule_code');
+    }
+
+    public function fee(): HasOne {
+        return $this->hasOne(ClubScheduleFee::class, 'schedule_code', 'schedule_code');
     }
 }

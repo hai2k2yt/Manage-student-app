@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Enums\RoleEnum;
 use App\Models\Club;
 use App\Models\ClubEnrollment;
+use App\Models\Teacher;
 use App\Models\User;
 
 class ClubEnrollmentPolicy
@@ -40,6 +41,18 @@ class ClubEnrollmentPolicy
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
         if ($user->role == RoleEnum::TEACHER->value) return true;
+        return false;
+    }
+
+    public function cancel(User $user, ClubEnrollment $enrollment): bool
+    {
+        if ($user->role == RoleEnum::ADMIN->value) return true;
+        if ($user->role == RoleEnum::TEACHER->value) {
+            $requestTeacher = Teacher::where('user_id', $user->id);
+            $club = Club::where('club_code', $enrollment->club_code);
+            if (!$requestTeacher || !$club) return false;
+            if ($requestTeacher->teacher_code == $club->teacher_code) return true;
+        }
         return false;
     }
 

@@ -18,8 +18,8 @@ class ClubScheduleFeeSeeder extends Seeder
         foreach ($schedule_codes as $schedule_code) {
             ClubScheduleFee::create([
                 'schedule_code' => $schedule_code,
-                'club_teacher_fee' => random_int(20,40) * 10000,
-                'class_teacher_fee' => random_int(20,40) * 1000,
+                'teacher_fee' => random_int(20,40) * 10000,
+                'student_fee' => random_int(20,40) * 1000,
             ]);
         }
     }
