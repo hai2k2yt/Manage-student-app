@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ErrorCodeEnum;
 use App\Http\Resources\TeacherResource;
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
@@ -18,5 +19,14 @@ class TeacherController extends Controller
         $teachers = $this->teacherRepository->getAll();
         $records = TeacherResource::collection($teachers);
         return $this->sendResponse($records);
+    }
+
+    public function showByUserId(Request $request, string $user_id) {
+        $teacher = $this->teacherRepository->getTeacherByUserID($user_id);
+        if(!$teacher) {
+            return $this->sendError(__('teacher.not_existed'), ErrorCodeEnum::TeacherShow);
+        }
+        return $this->sendResponse($teacher);
+
     }
 }

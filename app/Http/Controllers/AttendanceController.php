@@ -260,4 +260,14 @@ class AttendanceController extends Controller
             return $this->sendExceptionError($error, ErrorCodeEnum::AttendanceStatisticStudent);
         }
     }
+
+    public function getClubStudent(Request $request): JsonResponse
+    {
+        $res = $request->all();
+        $student_code = $res['student_code'];
+        $club_code = $res['club_code'];
+
+        $attendances = $this->attendanceRepository->byClubStudent($student_code, $club_code);
+        return $this->sendResponse($attendances);
+    }
 }

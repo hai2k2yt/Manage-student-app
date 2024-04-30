@@ -30,10 +30,6 @@ class StoreAbsenceReportRequest extends FormRequest
             'session_code' => 'required|exists:club_sessions,session_code',
             'student_code' => 'required|exists:students,student_code',
             'reason' => 'required|string',
-            'status' => [
-                'required',
-                Rule::in(AbsenceReportEnum::values())
-            ],
         ];
     }
 
@@ -46,8 +42,6 @@ class StoreAbsenceReportRequest extends FormRequest
             'student_code.exists' => __('validation.exists'),
             'reason.required' => __('validation.required'),
             'reason.string' => __('validation.string'),
-            'status.required' => __('validation.required'),
-            'status.in' => __('validation.in'),
         ];
     }
 }

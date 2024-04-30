@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ErrorCodeEnum;
+use App\Enums\RoleEnum;
 use App\Http\Requests\Student\StoreStudentRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Repositories\StudentRepository;
+use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +23,12 @@ class StudentController extends Controller
 {
     /**
      * @param StudentRepository $studentRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct(protected StudentRepository $studentRepository)
+    public function __construct(
+        protected StudentRepository $studentRepository,
+        protected UserRepository    $userRepository
+    )
     {
     }
 
@@ -50,10 +56,18 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->user()->cannot('store', Student::class)) {
+            if ($request->user()->cannot('store', Student::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
+            $user_id = $requestData['user_id'];
+            if ($user_id) {
+                $user = $this->userRepository->find($user_id);
+                if ($user->role != RoleEnum::PARENT->value) {
+                    return $this->sendError(__('student.parent_not_valid'), ErrorCodeEnum::StudentStore);
+                }
+            }
+
             $student = $this->studentRepository->create($requestData);
 
             $studentResource = new StudentResource($student);
@@ -82,7 +96,7 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->user()->cannot('update', Student::class)) {
+            if ($request->user()->cannot('update', Student::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
@@ -112,7 +126,7 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
-            if($request->user()->cannot('destroy', Student::class)) {
+            if ($request->user()->cannot('destroy', Student::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $student = $this->studentRepository->getStudent($id);
@@ -126,5 +140,16 @@ class StudentController extends Controller
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::StudentDelete);
         }
+    }
+
+    public function getByParentCode(Request $request, string $user_id): JsonResponse
+    {
+        $conditions = $request->all();
+        $parent = $this->userRepository->find($user_id);
+        if($parent->role != RoleEnum::PARENT->value) {
+            return $this->sendError(__('student.parent_code_not_valid'), ErrorCodeEnum::StudentGetParentCode);
+        }
+        $students = $this->studentRepository->getStudentByParent([...$conditions, 'user_id' => $user_id]);
+        return $this->sendPaginationResponse($students, StudentResource::collection($students));
     }
 }

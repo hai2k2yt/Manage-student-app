@@ -206,10 +206,10 @@ abstract class BaseRepository
      * Get one
      *
      * @param $id
-     *
+     * @param array $relations
      * @return mixed
      */
-    public function find($id, $relations = []): mixed
+    public function find($id, array $relations = []): mixed
     {
         return $this->model->with($relations)->find($id);
     }
@@ -265,12 +265,16 @@ abstract class BaseRepository
      * Get collection by conditions
      *
      * @param array $conditions
-     *
+     * @param array $relations
      * @return mixed
      */
-    public function getAllByConditions(array $conditions = []): mixed
+    public function getAllByConditions(array $conditions = [], array $relations = []): mixed
     {
         $collection = $this->getCollections();
+
+        if (count($relations)) {
+            $collection = $collection->with($relations);
+        }
 
         // Apply search condition
         $collection = $this->applySearch($collection, $conditions);
@@ -289,9 +293,9 @@ abstract class BaseRepository
      * Get collections for getByConditions
      *
      *
-     * @return BaseModel
+     * @return Model
      */
-    protected function getCollections(): BaseModel
+    protected function getCollections(): Model
     {
         return $this->model;
     }

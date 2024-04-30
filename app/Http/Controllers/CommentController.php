@@ -112,6 +112,7 @@ class CommentController extends Controller
     /**
      * Delete corporation department.
      *
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      */
@@ -133,5 +134,15 @@ class CommentController extends Controller
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::CommentDelete);
         }
+    }
+
+    public function getClubStudent(Request $request): JsonResponse
+    {
+        $res = $request->all();
+        $student_code = $res['student_code'];
+        $club_code = $res['club_code'];
+
+        $comments = $this->commentRepository->byClubStudent($student_code, $club_code);
+        return $this->sendResponse($comments);
     }
 }

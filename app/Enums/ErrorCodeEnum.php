@@ -11,6 +11,8 @@ enum ErrorCodeEnum: string
     case StudentStore = 'E-001';
     case StudentUpdate = 'E-002';
     case StudentDelete = 'E-003';
+    case StudentGetParentCode = 'E-004';
+
 
     case ClassStore = 'E-010';
     case ClassUpdate = 'E-011';
@@ -65,4 +67,5 @@ enum ErrorCodeEnum: string
     case NotificationDelete = 'E-103';
 
 
+    case TeacherShow = 'E-110';
 }

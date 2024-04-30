@@ -55,6 +55,7 @@ Route::middleware('api')->group(function () {
         Route::prefix('student')->group(function () {
             Route::get('/all', [StudentController::class, 'all'])->name('all');
             Route::get('', [StudentController::class, 'index'])->name('index');
+            Route::get('/parent/{user_id}', [StudentController::class, 'getByParentCode'])->name('getByParentCode');
             Route::post('', [StudentController::class, 'store'])->name('store');
             Route::get('{id}', [StudentController::class, 'show'])->name('show');
             Route::put('/{id}', [StudentController::class, 'update'])->whereUuid('id')->name('update');
@@ -63,6 +64,7 @@ Route::middleware('api')->group(function () {
 
         Route::prefix('teacher')->group(function () {
             Route::get('/all', [TeacherController::class, 'all'])->name('all');
+            Route::get('/user-id/{id}', [TeacherController::class, 'showByUserId'])->name('showByUserId');
         });
 
         Route::prefix('class')->group(function () {
@@ -123,7 +125,7 @@ Route::middleware('api')->group(function () {
             Route::put('/{id?}', [AbsenceReportController::class, 'update'])->name('update');
             Route::delete('/{id?}', [AbsenceReportController::class, 'destroy'])->name('destroy');
             Route::get('/session/{id?}', [AbsenceReportController::class, 'getBySession'])->name('getBySession');
-
+            Route::get('/club-student', [AbsenceReportController::class, 'getClubStudent'])->name('getClubStudent');
         });
 
         Route::prefix('attendance')->group(function () {
@@ -134,6 +136,7 @@ Route::middleware('api')->group(function () {
             Route::put('update-many/{id?}', [AttendanceController::class, 'updateMany'])->name('updateMany');
             Route::delete('/{id?}', [AttendanceController::class, 'destroy'])->name('destroy');
             Route::get('/club/{club_id?}/student/{student_id?}', [AttendanceController::class, 'statisticStudents'])->name('statisticStudents');
+            Route::get('/club-student', [AttendanceController::class, 'getClubStudent'])->name('getClubStudent');
         });
 
         Route::prefix('club-session-photo')->group(function () {
@@ -149,6 +152,7 @@ Route::middleware('api')->group(function () {
         Route::prefix('comment')->group(function () {
             Route::get('/all', [CommentController::class, 'all'])->name('all');
             Route::get('', [CommentController::class, 'index'])->name('index');
+            Route::get('/club-student', [CommentController::class, 'getClubStudent'])->name('getClubStudent');
             Route::post('', [CommentController::class, 'store'])->name('store');
             Route::get('/{id?}', [CommentController::class, 'show'])->name('show');
             Route::get('/club-session/{id}', [CommentController::class, 'getByClubSession'])->name('getByClubSession');

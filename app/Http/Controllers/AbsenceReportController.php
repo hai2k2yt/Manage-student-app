@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AbsenceReportEnum;
 use App\Enums\ErrorCodeEnum;
 use App\Enums\RoleEnum;
 use App\Http\Requests\AbsenceReport\StoreAbsenceReportRequest;
@@ -13,7 +14,7 @@ use App\Repositories\AbsenceReportRepository;
 use App\Repositories\ClubSessionRepository;
 use App\Repositories\TeacherRepository;
 use Exception;
-use HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -79,7 +80,7 @@ class AbsenceReportController extends Controller
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $club_session->schedule->teacher_code != $requestTeacher->teacher_code) throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $absenceReport = $this->absenceReportRepository->create($requestData);
+            $absenceReport = $this->absenceReportRepository->create([...$requestData, 'status' => AbsenceReportEnum::PENDING->value]);
             $absenceReportResource = new AbsenceReportResource($absenceReport);
             DB::commit();
             return $this->sendResponse($absenceReportResource, __('common.created'), Response::HTTP_CREATED);
@@ -164,5 +165,15 @@ class AbsenceReportController extends Controller
             'session_code' => $id
         ));
         return $this->sendResponse($absenceReports);
+    }
+
+    public function getClubStudent(Request $request)
+    {
+        $res = $request->all();
+        $student_code = $res['student_code'];
+        $club_code = $res['club_code'];
+
+        $absence_reports = $this->absenceReportRepository->byClubStudent($student_code, $club_code);
+        return $this->sendResponse($absence_reports);
     }
 }

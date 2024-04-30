@@ -26,11 +26,18 @@ class StudentRepository extends BaseRepository
     {
         $collection = $this->getCollections();
 
-        return $this->applyConditions($collection, $conditions, ['*'], ['clubs', 'class']);
+        return $this->applyConditions($collection, $conditions, ['*'], ['class', 'parent']);
+    }
+
+    public function getStudentByParent(array $conditions)
+    {
+        $collection = $this->getCollections();
+
+        return $this->applyConditions($collection, $conditions, ['*'], ['class', 'clubs.schedules.sessions.absence_reports', 'clubs.schedules.sessions.attendances', 'clubs.schedules.sessions.comments']);
     }
 
     public function getStudent(string $student_code) {
-        return $this->model->where('student_code', $student_code)->first();
+        return $this->model->where('student_code', $student_code)->with(['clubs.schedules.sessions'])->first();
 
     }
 }

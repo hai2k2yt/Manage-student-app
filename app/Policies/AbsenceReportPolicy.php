@@ -28,6 +28,7 @@ class AbsenceReportPolicy
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
         if ($user->role == RoleEnum::TEACHER->value) return true;
+        if ($user->role == RoleEnum::PARENT->value) return true;
         return false;
     }
 
@@ -41,6 +42,7 @@ class AbsenceReportPolicy
     public function update(User $user, AbsenceReport $absenceReport): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
+        if ($user->role == RoleEnum::PARENT->value) return true;
         if ($user->role == RoleEnum::TEACHER->value) {
             $teacher = Teacher::where('user_id', $user->id);
             if (!$teacher) return false;

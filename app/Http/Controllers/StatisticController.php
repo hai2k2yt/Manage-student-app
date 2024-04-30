@@ -19,7 +19,7 @@ class StatisticController extends Controller
 {
     public function statisticStudentFee(StatisticStudentFeeRequest $request): JsonResponse
     {
-        if ($request->user()->role != RoleEnum::ADMIN && $request->user()->role != RoleEnum::ACCOUNTANT) {
+        if ($request->user()->role != RoleEnum::ADMIN->value && $request->user()->role != RoleEnum::ACCOUNTANT->value) {
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
         $requestData = $request->validated();
@@ -66,7 +66,7 @@ class StatisticController extends Controller
 
     public function statisticTeacherFee(StatisticTeacherFeeRequest $request): JsonResponse
     {
-        if ($request->user()->role != RoleEnum::ADMIN && $request->user()->role != RoleEnum::ACCOUNTANT) {
+        if ($request->user()->role != RoleEnum::ADMIN->value && $request->user()->role != RoleEnum::ACCOUNTANT->value) {
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
         $requestData = $request->validated();

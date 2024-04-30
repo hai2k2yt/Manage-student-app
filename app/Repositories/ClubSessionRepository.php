@@ -32,15 +32,13 @@ class ClubSessionRepository extends BaseRepository
 
     public function getClubSession(string $session_code)
     {
-        return $this->model->where('session_code', $session_code)->first();
+        return $this->model->where('session_code', $session_code)->with(['schedule.club.teacher', 'schedule.teacher'])->first();
     }
 
     public function getByClubCode(string $id, array $conditions)
     {
         $club_schedule_codes = ClubSchedule::where('club_code', $id)->pluck('schedule_code')->toArray();
 
-        $collection = $this->getCollections();
-
-        return $this->applyConditions($collection, [...$conditions, 'schedule_code' => $club_schedule_codes], ['*'], ['schedule.club', 'schedule.teacher']);
+        return $this->getByConditions([...$conditions, 'schedule_code' => $club_schedule_codes], ['*'], ['schedule.club', 'schedule.teacher']);
     }
 }
