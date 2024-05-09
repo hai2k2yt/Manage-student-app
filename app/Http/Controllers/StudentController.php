@@ -119,17 +119,17 @@ class StudentController extends Controller
      * Delete corporation department.
      *
      * @param Request $request
-     * @param string $id
+     * @param string $student_code
      * @return JsonResponse
      */
-    public function destroy(Request $request, string $id): JsonResponse
+    public function destroy(Request $request, string $student_code): JsonResponse
     {
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('destroy', Student::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
-            $student = $this->studentRepository->getStudent($id);
+            $student = $this->studentRepository->getStudent($student_code);
             if (!$student) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentDelete, Response::HTTP_NOT_FOUND);
             }

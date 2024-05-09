@@ -8,8 +8,10 @@ use App\Http\Requests\Statistic\StatisticTeacherFeeRequest;
 use App\Models\Club;
 use App\Models\ClubEnrollment;
 use App\Models\ClubScheduleFee;
+use App\Models\ClubSession;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,25 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StatisticController extends Controller
 {
+
+    public function statisticOverall(Request $request)
+    {
+        $user = User::count();
+        $student = Student::count();
+        $teacher = Teacher::count();
+        $club = Club::count();
+        $session = ClubSession::count();
+
+        return $this->sendResponse([
+            'user' => $user,
+            'student' => $student,
+            'teacher' => $teacher,
+            'club' => $club,
+            'session' => $session
+        ],
+            __('common.get_success'));
+    }
+
     public function statisticStudentFee(StatisticStudentFeeRequest $request): JsonResponse
     {
         if ($request->user()->role != RoleEnum::ADMIN->value && $request->user()->role != RoleEnum::ACCOUNTANT->value) {

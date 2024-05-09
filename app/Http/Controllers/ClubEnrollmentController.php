@@ -131,13 +131,16 @@ class ClubEnrollmentController extends Controller
         }
     }
 
-    public function cancelEnrollment(CancelClubEnrollmentRequest $request) {
+    public function cancelEnrollment(CancelClubEnrollmentRequest $request, string $id) {
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $to = $requestData['to'];
-            $club_enrollment_id = $requestData['club_enrollment_id'];
+            $to = $requestData['to'] ?? date('Y-d-m');
+            $club_enrollment_id = $id;
             $club_enrollment = $this->clubEnrollmentRepository->find($club_enrollment_id);
+            if(!$club_enrollment) {
+                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubEnrollmentCancel);
+            }
             if ($request->user()->cannot('cancel', $club_enrollment)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
@@ -146,14 +149,16 @@ class ClubEnrollmentController extends Controller
             }
             $enrollment_histories_check = ClubEnrollmentHistory
                 ::where('club_enrollment_id', $club_enrollment_id)
-                ->where('from', '<=', date($to))
-                ->where('to', '>=', date($to))
-                ->where('status', ClubEnrollmentStatusEnum::ABSENCE)->get();
+                ->where('from', '<=', $to)
+                ->where('to', '>=', $to)
+                ->where('status', ClubEnrollmentStatusEnum::ABSENCE)->count();
             if($enrollment_histories_check) {
                 return $this->sendError(__('enrollment.to.not_valid'), ErrorCodeEnum::ClubEnrollmentCancel);
             }
+
             $this->clubEnrollmentRepository->update($club_enrollment_id, ['status' => ClubEnrollmentStatusEnum::ABSENCE]);
-            $current_enrollment_history = ClubEnrollmentHistory::where('status', ClubEnrollmentStatusEnum::STUDY)->get();
+
+            $current_enrollment_history = $club_enrollment->enrollment_histories()->where('status', ClubEnrollmentStatusEnum::STUDY);
             $current_enrollment_history->update(['status' => ClubEnrollmentStatusEnum::ABSENCE, 'to' => $to]);
             DB::commit();
             return $this->sendResponse(null, __('common.updated'));
@@ -193,7 +198,7 @@ class ClubEnrollmentController extends Controller
             }
             $this->clubEnrollmentRepository->delete($id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClubEnrollmentDelete);

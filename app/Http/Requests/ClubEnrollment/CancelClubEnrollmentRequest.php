@@ -25,7 +25,7 @@ class CancelClubEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_enrollment_id' => 'required|exists:club_enrollments,id'
+            'to' => 'nullable|date_format:Y-d-m'
         ];
     }
 }

@@ -58,8 +58,8 @@ Route::middleware('api')->group(function () {
             Route::get('/parent/{user_id}', [StudentController::class, 'getByParentCode'])->name('getByParentCode');
             Route::post('', [StudentController::class, 'store'])->name('store');
             Route::get('{id}', [StudentController::class, 'show'])->name('show');
-            Route::put('/{id}', [StudentController::class, 'update'])->whereUuid('id')->name('update');
-            Route::delete('/{id}', [StudentController::class, 'destroy'])->whereUuid('id')->name('destroy');
+            Route::put('/{id}', [StudentController::class, 'update'])->name('update');
+            Route::delete('/{student_code}', [StudentController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('teacher')->group(function () {
@@ -91,7 +91,7 @@ Route::middleware('api')->group(function () {
             Route::get('/all', [ClubEnrollmentController::class, 'all'])->name('all');
             Route::get('', [ClubEnrollmentController::class, 'index'])->name('index');
             Route::post('', [ClubEnrollmentController::class, 'store'])->name('store');
-            Route::post('/cancel', [ClubEnrollmentController::class, 'cancelEnrollment'])->name('cancelEnrollment');
+            Route::post('/{id?}/cancel', [ClubEnrollmentController::class, 'cancelEnrollment'])->name('cancelEnrollment');
             Route::delete('/{id?}', [ClubEnrollmentController::class, 'destroy'])->name('destroy');
             Route::post('/assign-students', [ClubEnrollmentController::class, 'assignStudents'])->name('assignStudents');
 
@@ -169,6 +169,7 @@ Route::middleware('api')->group(function () {
         });
 
         Route::prefix('statistic')->group(function () {
+            Route::get('/overall', [StatisticController::class, 'statisticOverall'])->name('statisticOverall');
             Route::get('/student-fee', [StatisticController::class, 'statisticStudentFee'])->name('statisticStudentFee');
             Route::get('/teacher-fee', [StatisticController::class, 'statisticTeacherFee'])->name('statisticTeacherFee');
         });

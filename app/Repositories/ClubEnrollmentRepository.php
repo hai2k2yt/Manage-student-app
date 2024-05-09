@@ -30,8 +30,6 @@ class ClubEnrollmentRepository extends BaseRepository
 
     public function getClubEnrollmentList(array $conditions)
     {
-        $collection = $this->getCollections();
-
-        return $this->applyConditions($collection, $conditions);
+        return $this->getByConditions($conditions, ['*'], ['enrollment_histories', 'student']);
     }
 }
