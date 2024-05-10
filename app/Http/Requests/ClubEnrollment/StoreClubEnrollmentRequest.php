@@ -28,7 +28,6 @@ class StoreClubEnrollmentRequest extends FormRequest
             'student_code' => 'required|exists:students,student_code',
             'club_code' => 'required|exists:clubs,club_code',
             'from' => 'required|date',
-            'to' => 'required|date|after_or_equal:from'
         ];
     }
 

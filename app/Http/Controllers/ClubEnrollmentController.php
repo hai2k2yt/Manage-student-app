@@ -83,18 +83,20 @@ class ClubEnrollmentController extends Controller
 
             $currentEnrollments =
                 ClubEnrollment::where('club_code', $club_code)
-                    ->where('student_code', $student_code)->get();
+                    ->where('student_code', $student_code)->first();
 
             // Not registered before
             if (!$currentEnrollments) {
-                $clubEnrollment = $this->clubEnrollmentRepository->create([
+                $clubEnrollment = ClubEnrollment::create([
                     'club_code' => $club_code,
                     'student_code' => $student_code,
-                    'status' => ClubEnrollmentStatusEnum::STUDY
+                    'status' => ClubEnrollmentStatusEnum::STUDY->value
                 ]);
-                ClubEnrollmentHistory::create([
+                dd($clubEnrollment);
+                $enrollment_history = ClubEnrollmentHistory::create([
                     'club_enrollment_id' => $clubEnrollment->id,
-                    'from' => $from
+                    'from' => $from,
+                    'status' => ClubEnrollmentStatusEnum::STUDY
                 ]);
 
                 DB::commit();
@@ -121,7 +123,8 @@ class ClubEnrollmentController extends Controller
             }
             ClubEnrollmentHistory::create([
                 'club_enrollment_id' => $currentEnrollments->id,
-                'from' => $from
+                'from' => $from,
+                'status' => ClubEnrollmentStatusEnum::STUDY
             ]);
             DB::commit();
             return $this->sendResponse(null, __('common.created'), Response::HTTP_CREATED);
