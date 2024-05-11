@@ -92,11 +92,14 @@ class ClubEnrollmentController extends Controller
                     'student_code' => $student_code,
                     'status' => ClubEnrollmentStatusEnum::STUDY->value
                 ]);
-                dd($clubEnrollment);
+                $createdEnrollment = ClubEnrollment::where('club_code', $club_code)
+                    ->where('student_code', $student_code)
+                    ->where('status', ClubEnrollmentStatusEnum::STUDY->value)
+                    ->first();
                 $enrollment_history = ClubEnrollmentHistory::create([
-                    'club_enrollment_id' => $clubEnrollment->id,
+                    'club_enrollment_id' => $createdEnrollment->id,
                     'from' => $from,
-                    'status' => ClubEnrollmentStatusEnum::STUDY
+                    'status' => ClubEnrollmentStatusEnum::STUDY->value
                 ]);
 
                 DB::commit();
@@ -105,11 +108,11 @@ class ClubEnrollmentController extends Controller
 
             // Registered before
             // Studying
-            if ($currentEnrollments->status == ClubEnrollmentStatusEnum::STUDY) {
+            if ($currentEnrollments->status == ClubEnrollmentStatusEnum::STUDY->value) {
                 return $this->sendError(__('common.existed'), ErrorCodeEnum::ClubEnrollmentStore, Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             $currentEnrollments->update([
-               'status' => ClubEnrollmentStatusEnum::STUDY
+               'status' => ClubEnrollmentStatusEnum::STUDY->value
             ]);
             //Absence
             $enrollment_history =
@@ -117,14 +120,13 @@ class ClubEnrollmentController extends Controller
                     ->where('from', '>=', date($from))
                     ->where('to', '<=', date($from))
                     ->get();
-
-            if ($enrollment_history) {
+            if ($enrollment_history->count() > 0) {
                 return $this->sendError(__('enrollment.date_not_valid'), ErrorCodeEnum::ClubEnrollmentStore);
             }
             ClubEnrollmentHistory::create([
                 'club_enrollment_id' => $currentEnrollments->id,
                 'from' => $from,
-                'status' => ClubEnrollmentStatusEnum::STUDY
+                'status' => ClubEnrollmentStatusEnum::STUDY->value
             ]);
             DB::commit();
             return $this->sendResponse(null, __('common.created'), Response::HTTP_CREATED);

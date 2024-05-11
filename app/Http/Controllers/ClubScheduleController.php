@@ -137,7 +137,7 @@ class ClubScheduleController extends Controller
     {
         DB::beginTransaction();
         try {
-            $clubSchedule = $this->clubScheduleRepository->find($id);
+            $clubSchedule = $this->clubScheduleRepository->getClubSchedule($id);
             if (!$clubSchedule) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubScheduleDelete, Response::HTTP_NOT_FOUND);
             }
