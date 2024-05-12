@@ -8,7 +8,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RegisterRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     use ApiFailedValidation;
 
@@ -28,14 +28,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|email|between:2,100|unique:users',
-            'name' => 'required|string|between:2,100',
-            'password' => 'required|string|min:6',
-            'role' => [
-                'required',
-                Rule::in(RoleEnum::values())
-            ],
-            'code' => 'nullable|string'
+            'name' => 'nullable|string|between:2,100'
         ];
     }
 }

@@ -22,6 +22,7 @@ enum ErrorCodeEnum: string
     case ClubStore = 'E-020';
     case ClubUpdate = 'E-021';
     case ClubDelete = 'E-022';
+    case ClubMe = 'E-023';
 
     case ClubEnrollmentStore = 'E-030';
     case ClubEnrollmentUpdate = 'E-031';
@@ -68,4 +69,7 @@ enum ErrorCodeEnum: string
 
 
     case TeacherShow = 'E-110';
+    case UserRegister = 'E-120';
+    case AuthUpdateProfile = 'E-130';
+
 }

@@ -7,8 +7,12 @@ use App\Http\Requests\Club\StoreClubRequest;
 use App\Http\Requests\Club\UpdateClubRequest;
 use App\Http\Resources\ClubResource;
 use App\Models\Club;
+use App\Models\ClubSchedule;
 use App\Models\StudentClass;
+use App\Models\Teacher;
 use App\Repositories\ClubRepository;
+use App\Repositories\ClubScheduleRepository;
+use App\Repositories\TeacherRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,8 +24,14 @@ class ClubController extends Controller
 {
     /**
      * @param ClubRepository $clubRepository
+     * @param TeacherRepository $teacherRepository
+     * @param ClubScheduleRepository $clubScheduleRepository
      */
-    public function __construct(protected ClubRepository $clubRepository)
+    public function __construct(
+        protected ClubRepository         $clubRepository,
+        protected TeacherRepository      $teacherRepository,
+        protected ClubScheduleRepository $clubScheduleRepository
+    )
     {
     }
 
@@ -66,16 +76,30 @@ class ClubController extends Controller
     public function show(string $id): JsonResponse
     {
         $club = $this->clubRepository->getClub($id);
-        if(!$club) {
+        if (!$club) {
             return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubShow, Response::HTTP_NOT_FOUND);
         }
         return $this->sendResponse($club, __('common.get_success'));
     }
 
+    public function me(Request $request)
+    {
+        $params = $request->all();
+        if ($request->user()->cannot('me', Club::class)) {
+            return $this->sendError(__('club.forbidden'), ErrorCodeEnum::ClubMe, Response::HTTP_FORBIDDEN);
+        }
+        $id = $request->user()->id;
+        $teacher = $this->teacherRepository->getTeacherByUserID($id);
+        $teacher_code = $teacher->teacher_code;
+        $club_codes = ClubSchedule::where('teacher_code', $teacher_code)->pluck('club_code')->all();
+        $clubs = $this->clubRepository->getByConditions([...$params, 'club_code' => $club_codes], ['*'], ['teacher']);
+        return $this->sendPaginationResponse($clubs, ClubResource::collection($clubs));
+    }
+
     public function students(string $id): JsonResponse
     {
         $club = $this->clubRepository->getClub($id);
-        if(!$club) {
+        if (!$club) {
             return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubGetStudents, Response::HTTP_NOT_FOUND);
         }
         return $this->sendResponse($club->students, __('common.get_success'));

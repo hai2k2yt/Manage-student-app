@@ -61,12 +61,12 @@ class ClubSessionController extends Controller
             $schedule_code = $requestData['schedule_code'];
             $clubSchedule = $this->clubScheduleRepository->getClubSchedule($schedule_code);
             if ($request->user()->cannot('store', ClubSession::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(__('common.forbidden'), ErrorCodeEnum::ClubSessionStore, Response::HTTP_FORBIDDEN);
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $clubSchedule->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(__('common.forbidden'), ErrorCodeEnum::ClubSessionStore, Response::HTTP_FORBIDDEN);
             }
             $clubSession = $this->clubSessionRepository->create($requestData);
             $clubSessionResource = new ClubSessionResource($clubSession);
@@ -137,7 +137,7 @@ class ClubSessionController extends Controller
     {
         DB::beginTransaction();
         try {
-            $clubSession = $this->clubSessionRepository->find($id);
+            $clubSession = $this->clubSessionRepository->getClubSession($id);
             if (!$clubSession) {
                 return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionDelete, Response::HTTP_NOT_FOUND);
             }

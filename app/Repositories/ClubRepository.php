@@ -11,6 +11,7 @@ class ClubRepository extends BaseRepository
         'name'
     ];
     protected array $filterFields = [
+        'club_code',
         'club_code_like',
         'name_like',
         'teacher_code'

@@ -39,6 +39,7 @@ Route::middleware('api')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
         Route::post('register', [AuthController::class, 'register']);
         Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('profile', [AuthController::class, 'updateProfile']);
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
         Route::post('change-password', [AuthController::class, 'changePassword']);
         Route::post('refresh', [AuthController::class, 'refresh']);
@@ -82,6 +83,7 @@ Route::middleware('api')->group(function () {
             Route::get('', [ClubController::class, 'index'])->name('index');
             Route::post('', [ClubController::class, 'store'])->name('store');
             Route::get('{id}', [ClubController::class, 'show'])->name('show');
+            Route::get('/profile/me/', [ClubController::class, 'me'])->name('me');
             Route::get('{id}/students', [ClubController::class, 'students'])->name('students');
             Route::put('/{id?}', [ClubController::class, 'update'])->name('update');
             Route::delete('/{id?}', [ClubController::class, 'destroy'])->name('destroy');

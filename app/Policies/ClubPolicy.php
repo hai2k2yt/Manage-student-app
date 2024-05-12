@@ -29,6 +29,17 @@ class ClubPolicy
     }
 
     /**
+     * Determine whether the user can create the model.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function me(User $user): bool
+    {
+        return $user->role == RoleEnum::TEACHER->value;
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @param User $user
