@@ -85,9 +85,14 @@ trait ApiResponse
         );
 
         if ($e instanceof HttpException && $e?->getStatusCode() == Response::HTTP_FORBIDDEN) {
-            return $this->sendError(__('common.access_denied'), $errorCode, Response::HTTP_FORBIDDEN);
+            return $this->sendError(__('common.access_denied'), $errorCode, Response::HTTP_FORBIDDEN, ['auth' => __('auth.forbidden')]);
         }
 
-        return $this->sendError(__('common.server_error'), $errorCode);
+        return $this->sendError(
+            __('common.server_error'),
+            $errorCode,
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            ['common' => __('common.server_error')]
+        );
     }
 }

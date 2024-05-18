@@ -66,20 +66,40 @@ class AbsenceReportController extends Controller
 
             $club_student_codes = $club_session->schedule->club->students->pluck('student_code')->toArray();
             if (!in_array($student_code, $club_student_codes)) {
-                return $this->sendError(__('student.error.not_in_club'), ErrorCodeEnum::AbsenceReportStore);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportStore,
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['student' => __('student.error.not_in_club')]
+                );
             }
 
             $absence_report_student_codes = $club_session->absence_reports->pluck('student_code')->toArray();
             if (in_array($student_code, $absence_report_student_codes)) {
-                return $this->sendError(__('absence_report.existed'), ErrorCodeEnum::AbsenceReportStore);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['absence_report' => __('absence_report.existed')]
+                );
             }
             if ($request->user()->cannot('store', AbsenceReport::class)) {
-                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::AbsenceReportStore, Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $club_session->schedule->teacher_code != $requestTeacher->teacher_code)
-                    return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::AbsenceReportStore, Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::AbsenceReportStore,
+                        Response::HTTP_INTERNAL_SERVER_ERROR,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $absenceReport = $this->absenceReportRepository->create([...$requestData, 'status' => AbsenceReportEnum::PENDING->value]);
             $absenceReportResource = new AbsenceReportResource($absenceReport);
@@ -105,15 +125,30 @@ class AbsenceReportController extends Controller
             $requestData = $request->validated();
             $absenceReport = $this->absenceReportRepository->find($id);
             if (!$absenceReport) {
-                return $this->sendError(__('absence_report.error.not_found'), ErrorCodeEnum::AbsenceReportUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['absence_report' => __('absence_report.error.not_found')]
+                );
             }
             if ($request->user()->cannot('update', $absenceReport)) {
-                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::AbsenceReportUpdate, Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportUpdate,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $absenceReport->session->schedule->teacher_code != $requestTeacher->teacher_code) {
-                    return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::AbsenceReportUpdate, Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::AbsenceReportUpdate,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
                 }
             }
 
@@ -140,15 +175,30 @@ class AbsenceReportController extends Controller
         try {
             $absenceReport = $this->absenceReportRepository->find($id);
             if (!$absenceReport) {
-                return $this->sendError(__('absence_report.error.not_found'), ErrorCodeEnum::AbsenceReportDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['absence_report' => __('absence_report.error.not_found')]
+                );
             }
             if ($request->user()->cannot('destroy', $absenceReport)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::AbsenceReportDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $absenceReport->session->schedule->teacher_code != $requestTeacher->teacher_code) {
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::AbsenceReportDelete,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
                 }
             }
             $this->absenceReportRepository->delete($id);

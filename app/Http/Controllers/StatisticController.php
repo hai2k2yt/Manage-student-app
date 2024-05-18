@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ErrorCodeEnum;
 use App\Enums\RoleEnum;
 use App\Http\Requests\Statistic\StatisticStudentFeeRequest;
 use App\Http\Requests\Statistic\StatisticTeacherFeeRequest;
@@ -41,7 +42,12 @@ class StatisticController extends Controller
     public function statisticStudentFee(StatisticStudentFeeRequest $request): JsonResponse
     {
         if ($request->user()->role != RoleEnum::ADMIN->value && $request->user()->role != RoleEnum::ACCOUNTANT->value) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::StatisticStudentFee,
+                Response::HTTP_FORBIDDEN,
+                ['auth' => __('auth.forbidden')]
+            );
         }
         $requestData = $request->validated();
         $from = strtotime($requestData['from']);
@@ -88,7 +94,12 @@ class StatisticController extends Controller
     public function statisticTeacherFee(StatisticTeacherFeeRequest $request): JsonResponse
     {
         if ($request->user()->role != RoleEnum::ADMIN->value && $request->user()->role != RoleEnum::ACCOUNTANT->value) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::StatisticTeacherFee,
+                Response::HTTP_FORBIDDEN,
+                ['auth' => __('auth.forbidden')]
+            );
         }
         $requestData = $request->validated();
         $from = strtotime($requestData['from']);

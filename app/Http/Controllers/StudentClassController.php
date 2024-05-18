@@ -57,7 +57,12 @@ class StudentClassController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('store', StudentClass::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $requestData = $request->validated();
             $studentClass = $this->studentClassRepository->create($requestData);
@@ -88,12 +93,22 @@ class StudentClassController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('update', StudentClass::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassUpdate,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $requestData = $request->validated();
             $student = $this->studentClassRepository->getStudentClass($id);
             if (!$student) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['student_class' => __('student_class.error.not_found')]
+                );
             }
 
             $studentRes = $this->studentClassRepository->update($student->id, $requestData);
@@ -118,11 +133,21 @@ class StudentClassController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('destroy', StudentClass::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $studentClass = $this->studentClassRepository->getStudentClass($id);
             if (!$studentClass) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClassDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['student_class' => __('student_class.error.not_found')]
+                );
             }
             $this->studentClassRepository->delete($studentClass->id);
             DB::commit();
@@ -142,10 +167,20 @@ class StudentClassController extends Controller
             $class_code = $requestData['class_code'];
             $class = $this->studentClassRepository->getStudentClass($class_code);
             if (!$class) {
-                return $this->sendResponse('common.not_found', __('common.updated'));
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassAssignStudent,
+                    Response::HTTP_NOT_FOUND,
+                    ['student_class' => __('student_class.error.not_found')]
+                );
             }
             if ($request->user()->cannot('assignStudents', $class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClassAssignStudent,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $response = [
                 "update_success" => [],

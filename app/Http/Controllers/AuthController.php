@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -43,7 +44,12 @@ class AuthController extends Controller
             if ($role == RoleEnum::TEACHER->value) {
                 $teacher_code = $validated['code'];
                 if (!$teacher_code) {
-                    return $this->sendError(__('teacher.teacher_code_required'), ErrorCodeEnum::UserRegister);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::UserRegister,
+                        Response::HTTP_INTERNAL_SERVER_ERROR,
+                        ['teacher' => __('teacher.teacher_code_required')]
+                    );
                 }
                 Teacher::create([
                     'teacher_code' => $teacher_code,
@@ -108,7 +114,7 @@ class AuthController extends Controller
             return $this->sendResponse(null, __('auth.success.update_profile'));
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->sendError(__('auth.error.update_profile'), ErrorCodeEnum::AuthUpdateProfile);
+            return $this->sendExceptionError($e, ErrorCodeEnum::AuthUpdateProfile);
         }
     }
 

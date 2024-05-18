@@ -57,14 +57,24 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('store', Student::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::StudentStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $requestData = $request->validated();
             $user_id = $requestData['user_id'];
             if ($user_id) {
                 $user = $this->userRepository->find($user_id);
                 if ($user->role != RoleEnum::PARENT->value) {
-                    return $this->sendError(__('student.error.parent_not_valid'), ErrorCodeEnum::StudentStore);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::StudentStore,
+                        Response::HTTP_INTERNAL_SERVER_ERROR,
+                        ['student' => __('student.error.parent_not_valid')]
+                    );
                 }
             }
 
@@ -97,12 +107,22 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('update', Student::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::StudentUpdate,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $requestData = $request->validated();
             $student = $this->studentRepository->getStudent($id);
             if (!$student) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::StudentUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['student' => __('student.error.not_found')]
+                );
             }
 
             $student = $this->studentRepository->update($student->id, $requestData);
@@ -127,11 +147,21 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('destroy', Student::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::StudentDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             $student = $this->studentRepository->getStudent($student_code);
             if (!$student) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::StudentDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::StudentDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['student' => __('student.error.not_found')]
+                );
             }
             $this->studentRepository->delete($student->id);
             DB::commit();
@@ -147,7 +177,12 @@ class StudentController extends Controller
         $conditions = $request->all();
         $parent = $this->userRepository->find($user_id);
         if($parent->role != RoleEnum::PARENT->value) {
-            return $this->sendError(__('student.error.parent_not_valid'), ErrorCodeEnum::StudentGetParentCode);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::StudentGetParentCode,
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                ['student' => __('student.error.parent_not_valid')]
+            );
         }
         $students = $this->studentRepository->getStudentByParent([...$conditions, 'user_id' => $user_id]);
         return $this->sendPaginationResponse($students, StudentResource::collection($students));

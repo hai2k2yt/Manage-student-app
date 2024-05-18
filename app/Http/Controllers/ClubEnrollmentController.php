@@ -73,12 +73,22 @@ class ClubEnrollmentController extends Controller
             $club = $this->clubRepository->getClub($club_code);
 
             if ($request->user()->cannot('store', ClubEnrollment::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubEnrollmentStore,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
 
             $currentEnrollments =
@@ -109,7 +119,12 @@ class ClubEnrollmentController extends Controller
             // Registered before
             // Studying
             if ($currentEnrollments->status == ClubEnrollmentStatusEnum::STUDY->value) {
-                return $this->sendError(__('club_enrollment.error.existed'), ErrorCodeEnum::ClubEnrollmentStore, Response::HTTP_INTERNAL_SERVER_ERROR);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentStore,
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['club_enrollment' => __('club_enrollment.error.existed')]
+                );
             }
             $currentEnrollments->update([
                'status' => ClubEnrollmentStatusEnum::STUDY->value
@@ -121,7 +136,12 @@ class ClubEnrollmentController extends Controller
                     ->where('to', '<=', date($from))
                     ->get();
             if ($enrollment_history->count() > 0) {
-                return $this->sendError(__('club_enrollment.error.date_not_valid'), ErrorCodeEnum::ClubEnrollmentStore);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentStore,
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['club_enrollment' => __('club_enrollment.error.date_not_valid')]
+                );
             }
             ClubEnrollmentHistory::create([
                 'club_enrollment_id' => $currentEnrollments->id,
@@ -144,13 +164,28 @@ class ClubEnrollmentController extends Controller
             $club_enrollment_id = $id;
             $club_enrollment = $this->clubEnrollmentRepository->find($club_enrollment_id);
             if(!$club_enrollment) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubEnrollmentCancel);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentCancel,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_enrollment' => __('club_enrollment.error.not_found')]
+                );
             }
             if ($request->user()->cannot('cancel', $club_enrollment)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentCancel,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if($club_enrollment->status == ClubEnrollmentStatusEnum::ABSENCE) {
-                return $this->sendError(__('club_enrollment.error.absence'), ErrorCodeEnum::ClubEnrollmentCancel);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentCancel,
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['club_enrollment' => __('club_enrollment.error.absence')]
+                );
             }
             $enrollment_histories_check = ClubEnrollmentHistory
                 ::where('club_enrollment_id', $club_enrollment_id)
@@ -158,7 +193,12 @@ class ClubEnrollmentController extends Controller
                 ->where('to', '>=', $to)
                 ->where('status', ClubEnrollmentStatusEnum::ABSENCE)->count();
             if($enrollment_histories_check) {
-                return $this->sendError(__('enrollment.error.to_not_valid'), ErrorCodeEnum::ClubEnrollmentCancel);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentCancel,
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['club_enrollment' => __('enrollment.error.to_not_valid')]
+                );
             }
 
             $this->clubEnrollmentRepository->update($club_enrollment_id, ['status' => ClubEnrollmentStatusEnum::ABSENCE]);
@@ -186,20 +226,40 @@ class ClubEnrollmentController extends Controller
         try {
             $clubEnrollment = $this->clubEnrollmentRepository->find($id);
             if (!$clubEnrollment) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubEnrollmentDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_enrollment' => __('club_enrollment.error.not_found')]
+                );
             }
             $club_code = $clubEnrollment->club_code;
             $club = $this->clubRepository->getClub($club_code);
             if (!$club) {
-                return $this->sendError(__('club.error.not_found'), ErrorCodeEnum::ClubEnrollmentDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['club' => __('club.error.not_found')]
+                );
             }
             if ($request->user()->cannot('destroy', ClubEnrollment::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubEnrollmentDelete,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $this->clubEnrollmentRepository->delete($id);
             DB::commit();
@@ -218,12 +278,22 @@ class ClubEnrollmentController extends Controller
             $club_code = $requestData['club_code'];
             $club = $this->clubRepository->getClub($club_code);
             if ($request->user()->cannot('assignStudents', ClubEnrollment::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubEnrollmentAssignStudent,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $club->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubEnrollmentAssignStudent,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $student_codes = $requestData['student_codes'];
             $response = [

@@ -61,12 +61,22 @@ class ClubSessionController extends Controller
             $schedule_code = $requestData['schedule_code'];
             $clubSchedule = $this->clubScheduleRepository->getClubSchedule($schedule_code);
             if ($request->user()->cannot('store', ClubSession::class)) {
-                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionStore, Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher || $clubSchedule->teacher_code != $requestTeacher->teacher_code)
-                    return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionStore, Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionStore,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $clubSession = $this->clubSessionRepository->create($requestData);
             $clubSessionResource = new ClubSessionResource($clubSession);
@@ -82,7 +92,12 @@ class ClubSessionController extends Controller
     {
         $clubSession = $this->clubSessionRepository->getClubSession($id);
         if (!$clubSession) {
-            return $this->sendError(__('club_session.error.not_found'), ErrorCodeEnum::ClubScheduleDelete, Response::HTTP_NOT_FOUND);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::ClubSessionShow,
+                Response::HTTP_NOT_FOUND,
+                ['club_session' => __('club_session.error.not_found')]
+            );
         }
         return $this->sendResponse($clubSession);
     }
@@ -109,15 +124,30 @@ class ClubSessionController extends Controller
             $requestData = $request->validated();
             $clubSession = $this->clubSessionRepository->getClubSession($id);
             if (!$clubSession) {
-                return $this->sendError(__('club_session.error.not_found'), ErrorCodeEnum::ClubSessionUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_session' => __('club_session.error.not_found')]
+                );
             }
             if ($request->user()->cannot('update', ClubSession::class)) {
-                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionUpdate, Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionUpdate,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if(!$requestTeacher && $clubSession->schedule->teacher_code != $requestTeacher->teacher_code)
-                    return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionUpdate, Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionUpdate,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $clubSession = $this->clubSessionRepository->update($clubSession->id, $requestData);
             $clubSessionResource = new ClubSessionResource($clubSession);
@@ -142,15 +172,30 @@ class ClubSessionController extends Controller
         try {
             $clubSession = $this->clubSessionRepository->getClubSession($id);
             if (!$clubSession) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_session' => __('club_session.error.not_found')]
+                );
             }
             if ($request->user()->cannot('destroy', ClubSession::class)) {
-                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionDelete, Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if(!$requestTeacher && $clubSession->schedule->teacher_code != $requestTeacher->teacher_code)
-                    return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionDelete, Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionDelete,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $this->clubSessionRepository->delete($clubSession->id);
             DB::commit();

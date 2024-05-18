@@ -65,12 +65,22 @@ class ClubSessionPhotoController extends Controller
             $session_code = $requestData['session_code'];
             $club_session = $this->clubSessionRepository->find($session_code);
             if ($request->user()->cannot('store', ClubSessionPhoto::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoStore,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher && $club_session->schedule->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionPhotoStore,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $path = Storage::putFile('session-photo', $requestData['photo_url'], 'public');
 
@@ -101,21 +111,41 @@ class ClubSessionPhotoController extends Controller
             $requestData = $request->validated();
             $club_session_photo = $this->clubSessionPhotoRepository->find($id);
             if (!$club_session_photo) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionPhotoUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_session_photo' => __('club_session_photo.error.not_found')]
+                );
             }
             if ($request->user()->cannot('update', ClubSessionPhoto::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoUpdate,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher && $club_session_photo->session->schedule->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionPhotoUpdate,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $path = Storage::putFile('public', $requestData['photo_url']);
             $requestData['photo_url'] = $path;
             $clubSessionPhoto = $this->clubSessionPhotoRepository->find($id);
             if (!$clubSessionPhoto) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionPhotoUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoUpdate,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_session_photo' => __('club_session_photo.error.not_found')]
+                );
             }
             $clubSessionPhoto = $this->clubSessionPhotoRepository->update($id, $requestData);
             $clubSessionPhotoResource = new ClubSessionPhotoResource($clubSessionPhoto);
@@ -140,15 +170,30 @@ class ClubSessionPhotoController extends Controller
         try {
             $club_session_photo = $this->clubSessionPhotoRepository->find($id);
             if (!$club_session_photo) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubSessionPhotoDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoDelete,
+                    Response::HTTP_NOT_FOUND,
+                    ['club_session_photo' => __('club_session_photo.error.not_found')]
+                );
             }
             if ($request->user()->cannot('destroy', ClubSessionPhoto::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(
+                    null,
+                    ErrorCodeEnum::ClubSessionPhotoDelete,
+                    Response::HTTP_FORBIDDEN,
+                    ['auth' => __('auth.forbidden')]
+                );
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
                 if (!$requestTeacher && $club_session_photo->session->schedule->teacher_code != $requestTeacher->teacher_code)
-                    throw new HttpException(Response::HTTP_FORBIDDEN);
+                    return $this->sendError(
+                        null,
+                        ErrorCodeEnum::ClubSessionPhotoDelete,
+                        Response::HTTP_FORBIDDEN,
+                        ['auth' => __('auth.forbidden')]
+                    );
             }
             $this->clubSessionPhotoRepository->delete($id);
             DB::commit();
@@ -163,7 +208,12 @@ class ClubSessionPhotoController extends Controller
     {
         $club = $this->clubRepository->getClub($id);
         if (!$club) {
-            return $this->sendError(__('club.not_found'), ErrorCodeEnum::ClubSessionPhotoByClub, Response::HTTP_NOT_FOUND);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::ClubSessionPhotoByClub,
+                Response::HTTP_NOT_FOUND,
+                ['club' => __('club.error.not_found')]
+            );
         }
         $session_codes = [];
         $club->schedules->each(function ($schedule) use (&$session_codes) {
@@ -183,7 +233,12 @@ class ClubSessionPhotoController extends Controller
     {
         $session = $this->clubSessionRepository->getClubSession($id);
         if (!$session) {
-            return $this->sendError(__('session.not_found'), ErrorCodeEnum::ClubSessionPhotoBySession, Response::HTTP_NOT_FOUND);
+            return $this->sendError(
+                null,
+                ErrorCodeEnum::ClubSessionPhotoBySession,
+                Response::HTTP_NOT_FOUND,
+                ['club_session' => __('club_session.error.not_found')]
+            );
         }
         $club_session_photos = $this->clubSessionPhotoRepository->getClubSessionPhotoList(
             ['session_code' => $id]
