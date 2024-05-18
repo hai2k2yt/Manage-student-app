@@ -126,14 +126,14 @@ class StudentClassController extends Controller
             }
             $this->studentClassRepository->delete($studentClass->id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (\Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClassDelete);
         }
     }
 
-    public function assignStudents(AssignStudentToClassRequest $request)
+    public function assignStudents(AssignStudentToClassRequest $request): JsonResponse
     {
         DB::beginTransaction();
         try {

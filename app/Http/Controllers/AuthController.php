@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\Auth\UpdateProfileRequest;
 use Exception;
 use App\Enums\ErrorCodeEnum;
@@ -39,10 +40,10 @@ class AuthController extends Controller
                 'role' => $role
             ]);
 
-            if($role == RoleEnum::TEACHER->value) {
+            if ($role == RoleEnum::TEACHER->value) {
                 $teacher_code = $validated['code'];
-                if(!$teacher_code) {
-                    return $this->sendError(__('teacher.code_not_exist'), ErrorCodeEnum::UserRegister);
+                if (!$teacher_code) {
+                    return $this->sendError(__('teacher.teacher_code_required'), ErrorCodeEnum::UserRegister);
                 }
                 Teacher::create([
                     'teacher_code' => $teacher_code,
@@ -53,7 +54,7 @@ class AuthController extends Controller
 
             DB::commit();
             return response()->json([
-                'message' => 'User successfully registered',
+                'message' => __('user.register_success'),
                 'user' => $user
             ], 201);
         } catch (Exception $e) {
@@ -67,7 +68,7 @@ class AuthController extends Controller
         $credentials = request(['username', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Wrong username or password'], 401);
+            return response()->json(['error' => __('auth.failed')], 401);
         }
 
         return $this->respondWithToken($token);
@@ -80,6 +81,15 @@ class AuthController extends Controller
      */
     public function me(): JsonResponse
     {
+        if (auth()->user()->role == 3) {
+            $teacher = Teacher::where('user_id', auth()->user()->id)->first();
+            return response()->json(
+                [
+                    ...auth()->user()->toArray(),
+                    "code" => $teacher->teacher_code
+                ]
+            );
+        }
         return response()->json(auth()->user());
     }
 
@@ -88,16 +98,17 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $validated = $request->validated();
+
             auth()->user()->update($validated);
-            if(auth()->user()->role == 3) {
+            if (auth()->user()->role == 3) {
                 $teacher = Teacher::where('user_id', auth()->user()->id)->first();
                 $teacher->update(['teacher_name' => $validated['name']]);
             }
             DB::commit();
-            return $this->sendResponse(null, __('auth.update_profile_success'));
+            return $this->sendResponse(null, __('auth.success.update_profile'));
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->sendError(__('auth.update_profile_error'), ErrorCodeEnum::AuthUpdateProfile);
+            return $this->sendError(__('auth.error.update_profile'), ErrorCodeEnum::AuthUpdateProfile);
         }
     }
 
@@ -128,12 +139,12 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Current password is incorrect'], 401);
+            return response()->json(['message' => __('auth.password')], 401);
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);
 
-        return response()->json(['message' => 'Password changed successfully']);
+        return response()->json(['message' => __('auth.success.change_password')]);
     }
 
     /**
@@ -145,7 +156,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => __('auth.success.logout')]);
     }
 
     /**
@@ -169,9 +180,9 @@ class AuthController extends Controller
     {
         $teacher_code = '';
         $user = auth()->user();
-        if($user->role == RoleEnum::TEACHER->value) {
+        if ($user->role == RoleEnum::TEACHER->value) {
             $teacher = Teacher::where('user_id', $user->id)->first();
-            if($teacher) {
+            if ($teacher) {
                 $teacher_code = $teacher->teacher_code;
             }
         }

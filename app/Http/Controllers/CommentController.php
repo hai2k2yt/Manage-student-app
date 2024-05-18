@@ -51,7 +51,7 @@ class CommentController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('store', Comment::class)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubSessionDelete, Response::HTTP_FORBIDDEN);
             }
             $requestData = $request->validated();
             $comment = $this->commentRepository->create($requestData);
@@ -75,7 +75,7 @@ class CommentController extends Controller
     {
         $comment = $this->commentRepository->getComment($id);
         if(!$comment) {
-            return $this->sendError(__('common.not_found'), ErrorCodeEnum::CommentShow, Response::HTTP_NOT_FOUND);
+            return $this->sendError(__('comment.error.not_found'), ErrorCodeEnum::CommentShow, Response::HTTP_NOT_FOUND);
         }
         return $this->sendResponse($comment, __('common.get_success'));
     }
@@ -94,10 +94,10 @@ class CommentController extends Controller
             $requestData = $request->validated();
             $comment = $this->commentRepository->getComment($id);
             if (!$comment) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::CommentUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('comment.error.not_found'), ErrorCodeEnum::CommentUpdate, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('update', $comment)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::CommentUpdate, Response::HTTP_FORBIDDEN);
             }
             $comment = $this->commentRepository->update($id, $requestData);
             $commentResource = new CommentResource($comment);
@@ -122,14 +122,14 @@ class CommentController extends Controller
         try {
             $comment = $this->commentRepository->find($id);
             if (!$comment) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::CommentDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('comment.error.not_found'), ErrorCodeEnum::CommentDelete, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('destroy', $comment)) {
-                throw new HttpException(Response::HTTP_FORBIDDEN);
+                return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::CommentDelete, Response::HTTP_FORBIDDEN);
             }
             $this->commentRepository->delete($id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::CommentDelete);

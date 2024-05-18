@@ -106,7 +106,7 @@ class ClubScheduleController extends Controller
             $requestData = $request->validated();
             $clubSchedule = $this->clubScheduleRepository->getClubSchedule($id);
             if (!$clubSchedule) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubScheduleUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('club_schedule.error.not_found'), ErrorCodeEnum::ClubScheduleUpdate, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('update', ClubSchedule::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
@@ -139,7 +139,7 @@ class ClubScheduleController extends Controller
         try {
             $clubSchedule = $this->clubScheduleRepository->getClubSchedule($id);
             if (!$clubSchedule) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubScheduleDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('club_schedule.error.not_found'), ErrorCodeEnum::ClubScheduleDelete, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('destroy', ClubSchedule::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
@@ -151,7 +151,7 @@ class ClubScheduleController extends Controller
             }
             $this->clubScheduleRepository->delete($clubSchedule->id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClubScheduleDelete);

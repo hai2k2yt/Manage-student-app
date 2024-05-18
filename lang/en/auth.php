@@ -16,5 +16,14 @@ return [
     'failed' => 'These credentials do not match our records.',
     'password' => 'The provided password is incorrect.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'forbidden' => 'Not have permission to access',
+    'success' => [
+        'update_profile' => 'Update profile success',
+        'change_password' => 'Change password successfully',
+        'logout' => 'Logout successfully'
+    ],
+    'error' => [
+        'update_profile' => 'Update profile failed',
+        'change_password' => 'Change password error'
+    ],
 ];

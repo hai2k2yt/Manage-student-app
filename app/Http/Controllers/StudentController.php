@@ -64,7 +64,7 @@ class StudentController extends Controller
             if ($user_id) {
                 $user = $this->userRepository->find($user_id);
                 if ($user->role != RoleEnum::PARENT->value) {
-                    return $this->sendError(__('student.parent_not_valid'), ErrorCodeEnum::StudentStore);
+                    return $this->sendError(__('student.error.parent_not_valid'), ErrorCodeEnum::StudentStore);
                 }
             }
 
@@ -147,7 +147,7 @@ class StudentController extends Controller
         $conditions = $request->all();
         $parent = $this->userRepository->find($user_id);
         if($parent->role != RoleEnum::PARENT->value) {
-            return $this->sendError(__('student.parent_code_not_valid'), ErrorCodeEnum::StudentGetParentCode);
+            return $this->sendError(__('student.error.parent_not_valid'), ErrorCodeEnum::StudentGetParentCode);
         }
         $students = $this->studentRepository->getStudentByParent([...$conditions, 'user_id' => $user_id]);
         return $this->sendPaginationResponse($students, StudentResource::collection($students));

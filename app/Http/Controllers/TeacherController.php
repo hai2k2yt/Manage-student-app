@@ -24,7 +24,7 @@ class TeacherController extends Controller
     public function showByUserId(Request $request, string $user_id) {
         $teacher = $this->teacherRepository->getTeacherByUserID($user_id);
         if(!$teacher) {
-            return $this->sendError(__('teacher.not_existed'), ErrorCodeEnum::TeacherShow);
+            return $this->sendError(__('teacher.error.not_found'), ErrorCodeEnum::TeacherShow);
         }
         return $this->sendResponse($teacher);
 

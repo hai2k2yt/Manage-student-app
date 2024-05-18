@@ -77,7 +77,7 @@ class ClubController extends Controller
     {
         $club = $this->clubRepository->getClub($id);
         if (!$club) {
-            return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubShow, Response::HTTP_NOT_FOUND);
+            return $this->sendError(__('club.error.not_found'), ErrorCodeEnum::ClubShow, Response::HTTP_NOT_FOUND);
         }
         return $this->sendResponse($club, __('common.get_success'));
     }
@@ -86,7 +86,7 @@ class ClubController extends Controller
     {
         $params = $request->all();
         if ($request->user()->cannot('me', Club::class)) {
-            return $this->sendError(__('club.forbidden'), ErrorCodeEnum::ClubMe, Response::HTTP_FORBIDDEN);
+            return $this->sendError(__('auth.forbidden'), ErrorCodeEnum::ClubMe, Response::HTTP_FORBIDDEN);
         }
         $id = $request->user()->id;
         $teacher = $this->teacherRepository->getTeacherByUserID($id);
@@ -100,7 +100,7 @@ class ClubController extends Controller
     {
         $club = $this->clubRepository->getClub($id);
         if (!$club) {
-            return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubGetStudents, Response::HTTP_NOT_FOUND);
+            return $this->sendError(__('club.error.not_found'), ErrorCodeEnum::ClubGetStudents, Response::HTTP_NOT_FOUND);
         }
         return $this->sendResponse($club->students, __('common.get_success'));
     }
@@ -119,7 +119,7 @@ class ClubController extends Controller
             $requestData = $request->validated();
             $club = $this->clubRepository->getClub($id);
             if (!$club) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubUpdate, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('club.error.not_found'), ErrorCodeEnum::ClubUpdate, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('update', $club)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
@@ -147,14 +147,14 @@ class ClubController extends Controller
         try {
             $club = $this->clubRepository->getClub($id);
             if (!$club) {
-                return $this->sendError(__('common.not_found'), ErrorCodeEnum::ClubDelete, Response::HTTP_NOT_FOUND);
+                return $this->sendError(__('club.error.not_found'), ErrorCodeEnum::ClubDelete, Response::HTTP_NOT_FOUND);
             }
             if ($request->user()->cannot('destroy', Club::class)) {
                 throw new HttpException(Response::HTTP_FORBIDDEN);
             }
             $this->clubRepository->delete($club->id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (\Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::ClubDelete);

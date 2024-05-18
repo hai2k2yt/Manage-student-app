@@ -100,7 +100,7 @@ class NotificationController extends Controller
             }
             $this->notificationRepository->delete($id);
             DB::commit();
-            return $this->sendResponse(null, __('common.deleted'), Response::HTTP_NO_CONTENT);
+            return $this->sendResponse(null, __('common.deleted'));
         } catch (Exception $error) {
             DB::rollBack();
             return $this->sendExceptionError($error, ErrorCodeEnum::NotificationDelete);
