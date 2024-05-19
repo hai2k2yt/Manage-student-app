@@ -35,9 +35,14 @@ class UpdateClubScheduleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'club_code.exists' => __('validation.exists'),
-            'teacher_code.exists' => __('validation.exists'),
-            'day_of_week.in' => __('validation.in'),
+            'schedule_name.string' => __('validation.exists', ['attribute' => __('club_schedule.field.schedule_name')]),
+            'schedule_name.max' => __('validation.exists', ['attribute' => __('club_schedule.field.schedule_name')]),
+
+            'club_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.club_code')]),
+
+            'teacher_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.teacher_code')]),
+
+            'day_of_week.in' => __('validation.in', ['attribute' => __('club_schedule.field.day_of_week')]),
         ];
     }
 }

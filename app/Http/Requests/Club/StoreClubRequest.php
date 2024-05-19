@@ -34,11 +34,14 @@ class StoreClubRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => __('validation.required'),
-            'name.string' => __('validation.string'),
-            'name.max' => __('validation.max'),
-            'teacher_code.required' => __('validation.required'),
-            'teacher_code.exists' => __('validation.exists'),
+            'club_code.required' => __('validation.required', ['attribute' => __('club.field.club_code')]),
+            'club_code.string' => __('validation.string', ['attribute' => __('club.field.club_code')]),
+            'club_code.max' => __('validation.max', ['attribute' => __('club.field.club_code')]),
+            'name.required' => __('validation.required', ['attribute' => __('club.field.name')]),
+            'name.string' => __('validation.string', ['attribute' => __('club.field.name')]),
+            'name.max' => __('validation.max', ['attribute' => __('club.field.name')]),
+            'teacher_code.required' => __('validation.required', ['attribute' => __('club.field.teacher_code')]),
+            'teacher_code.exists' => __('validation.exists', ['attribute' => __('club.field.teacher_code')]),
         ];
     }
 }

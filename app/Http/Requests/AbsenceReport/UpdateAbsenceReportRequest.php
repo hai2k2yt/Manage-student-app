@@ -28,8 +28,8 @@ class UpdateAbsenceReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'reason.string' => __('validation.string'),
-            'status.in' => __('validation.in'),
+            'reason.string' => __('validation.string', ['attribute' => __('absence_report.field.reason')]),
+            'status.in' => __('validation.in', ['attribute' => __('absence_report.field.status')]),
         ];
     }
 }

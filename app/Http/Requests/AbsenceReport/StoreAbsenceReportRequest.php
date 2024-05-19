@@ -36,12 +36,12 @@ class StoreAbsenceReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'session_code.required' => __('validation.required'),
-            'session_code.exists' => __('validation.exists'),
-            'student_code.required' => __('validation.required'),
-            'student_code.exists' => __('validation.exists'),
-            'reason.required' => __('validation.required'),
-            'reason.string' => __('validation.string'),
+            'session_code.required' => __('validation.required', ['attribute' => __('absence_report.field.session_code')]),
+            'session_code.exists' => __('validation.exists', ['attribute' => __('absence_report.field.session_code')]),
+            'student_code.required' => __('validation.required', ['attribute' => __('absence_report.field.student_code')]),
+            'student_code.exists' => __('validation.exists', ['attribute' => __('absence_report.field.student_code')]),
+            'reason.required' => __('validation.required', ['attribute' => __('absence_report.field.reason')]),
+            'reason.string' => __('validation.string', ['attribute' => __('absence_report.field.reason')]),
         ];
     }
 }

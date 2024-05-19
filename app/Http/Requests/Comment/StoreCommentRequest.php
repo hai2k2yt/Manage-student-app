@@ -34,12 +34,12 @@ class StoreCommentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'session_code.required' => __('validation.required'),
-            'session_code.exists' => __('validation.exists'),
-            'student_code.required' => __('validation.required'),
-            'student_code.exists' => __('validation.exists'),
-            'content.required' => __('validation.required'),
-            'content.string' => __('validation.string'),
+            'session_code.required' => __('validation.required', ['attribute' => __('comment.field.session_code')]),
+            'session_code.exists' => __('validation.exists', ['attribute' => __('comment.field.session_code')]),
+            'student_code.required' => __('validation.required', ['attribute' => __('comment.field.student_code')]),
+            'student_code.exists' => __('validation.exists', ['attribute' => __('comment.field.student_code')]),
+            'content.required' => __('validation.required', ['attribute' => __('comment.field.content')]),
+            'content.string' => __('validation.string', ['attribute' => __('comment.field.content')]),
         ];
     }
 }

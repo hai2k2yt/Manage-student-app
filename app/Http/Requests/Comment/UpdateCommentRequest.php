@@ -32,7 +32,7 @@ class UpdateCommentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'content.string' => __('validation.string'),
+            'content.string' => __('validation.string', ['attribute' => __('comment.field.string')]),
         ];
     }
 }

@@ -38,8 +38,8 @@ class UpdateAttendanceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'present.required' => __('validation.required'),
-            'present.in' => __('validation.in'),
+            'present.required' => __('validation.required', ['attribute' => __('attendance.field.present')]),
+            'present.in' => __('validation.in', ['attribute' => __('attendance.field.present')]),
         ];
     }
 }

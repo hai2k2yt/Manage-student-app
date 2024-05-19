@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\ChangePasswordRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\UpdateProfileRequest;
 use Exception;
 use App\Enums\ErrorCodeEnum;
@@ -69,12 +71,15 @@ class AuthController extends Controller
         }
     }
 
-    public function login(): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = request(['username', 'password']);
+        $credentials = $request->validated();
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => __('auth.failed')], 401);
+            return response()->json(
+                ['errors' => [
+                    'auth' => __('auth.failed')
+                ]], 401);
         }
 
         return $this->respondWithToken($token);
@@ -135,20 +140,17 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password updated successfully', 'new_password' => $newPassword]);
     }
 
-    public function changePassword(Request $request): JsonResponse
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:6',
-        ]);
+        $requestData = $request->validated();
 
         $user = auth()->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (!Hash::check($requestData['current_password'], $user->password)) {
             return response()->json(['message' => __('auth.password')], 401);
         }
 
-        $user->update(['password' => Hash::make($request->new_password)]);
+        $user->update(['password' => Hash::make($requestData['new_password'])]);
 
         return response()->json(['message' => __('auth.success.change_password')]);
     }

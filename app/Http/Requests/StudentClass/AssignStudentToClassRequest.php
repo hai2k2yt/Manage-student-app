@@ -34,12 +34,12 @@ class AssignStudentToClassRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'student_codes.required' => __('validation.required'),
-            'student_codes.array' => __('validation.array'),
-            'student_codes.*.required' => __('validation.required'),
-            'student_codes.*.exists' => __('validation.exists'),
-            'class_code.required' => __('validation.required'),
-            'class_code.exists' => __('validation.exists')
+            'student_codes.required' => __('validation.required', ['attribute' => __('student_class.field.student_code')]),
+            'student_codes.array' => __('validation.array', ['attribute' => __('student_class.field.student_code')]),
+            'student_codes.*.required' => __('validation.required', ['attribute' => __('student_class.field.student_code')]),
+            'student_codes.*.exists' => __('validation.exists', ['attribute' => __('student_class.field.student_code')]),
+            'class_code.required' => __('validation.required', ['attribute' => __('student_class.field.class_code')]),
+            'class_code.exists' => __('validation.exists', ['attribute' => __('student_class.field.class_code')])
         ];
     }
 }

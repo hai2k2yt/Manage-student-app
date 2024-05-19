@@ -34,8 +34,12 @@ class UpdateClubSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'schedule_code.exists' => __('validation.exists'),
-            'date.date' => __('validation.date'),
+            'session_name.string' => __('validation.string', ['attribute' => __('club_session.field.session_name')]),
+            'session_name.max' => __('validation.max', ['attribute' => __('club_session.field.session_name')]),
+
+            'schedule_code.exists' => __('validation.exists', ['attribute' => __('club_session.field.schedule_code')]),
+
+            'date.date' => __('validation.date', ['attribute' => __('club_session.field.date')]),
         ];
     }
 }

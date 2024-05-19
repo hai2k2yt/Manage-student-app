@@ -28,4 +28,11 @@ class CancelClubEnrollmentRequest extends FormRequest
             'to' => 'nullable|date_format:Y-d-m'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'to.date_format' => __('validation.date_format', ['attribute' => __('club_enrollment_history.field.to')]),
+        ];
+    }
 }

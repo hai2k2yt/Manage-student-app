@@ -34,10 +34,10 @@ class UpdateStudentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.string' => __('validation.string'),
-            'name.max' => __('validation.max'),
-            'user_id.exists' => __('validation.exists'),
-            'class_code.exists' => __('validation.exists'),
+            'name.string' => __('validation.string', ['attribute' => __('student.field.name')]),
+            'name.max' => __('validation.max', ['attribute' => __('student.field.name')]),
+            'user_id.exists' => __('validation.exists', ['attribute' => __('student.field.user_id')]),
+            'class_code.exists' => __('validation.exists', ['attribute' => __('student.field.class_code')]),
         ];
     }
 }

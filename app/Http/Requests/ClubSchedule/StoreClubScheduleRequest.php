@@ -25,7 +25,7 @@ class StoreClubScheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schedule_code' => 'required|string|unique:club_schedules,schedule_code|max:255',
+            'schedule_code' => 'required|string|max:255|unique:club_schedules,schedule_code',
             'schedule_name' => 'required|string|max:255',
             'club_code' => 'required|exists:clubs,club_code',
             'teacher_code' => 'required|exists:teachers,teacher_code',
@@ -36,12 +36,23 @@ class StoreClubScheduleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'club_code.required' => __('validation.required'),
-            'club_code.exists' => __('validation.exists'),
-            'teacher_code.required' => __('validation.required'),
-            'teacher_code.exists' => __('validation.exists'),
-            'day_of_week.required' => __('validation.required'),
-            'day_of_week.in' => __('validation.in'),
+            'schedule_code.required' => __('validation.required', ['attribute' => __('club_schedule.field.schedule_code')]),
+            'schedule_code.string' => __('validation.string', ['attribute' => __('club_schedule.field.schedule_code')]),
+            'schedule_code.max' => __('validation.max', ['attribute' => __('club_schedule.field.schedule_code')]),
+            'schedule_code.unique' => __('validation.unique', ['attribute' => __('club_schedule.field.schedule_code')]),
+
+            'schedule_name.required' => __('validation.required', ['attribute' => __('club_schedule.field.schedule_name')]),
+            'schedule_name.string' => __('validation.string', ['attribute' => __('club_schedule.field.schedule_name')]),
+            'schedule_name.max' => __('validation.max', ['attribute' => __('club_schedule.field.schedule_name')]),
+
+            'club_code.required' => __('validation.required', ['attribute' => __('club_schedule.field.club_code')]),
+            'club_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.club_code')]),
+
+            'teacher_code.required' => __('validation.required', ['attribute' => __('club_schedule.field.teacher_code')]),
+            'teacher_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.teacher_code')]),
+
+            'day_of_week.required' => __('validation.required', ['attribute' => __('club_schedule.field.day_of_week')]),
+            'day_of_week.in' => __('validation.in', ['attribute' => __('club_schedule.field.day_of_week')]),
         ];
     }
 }

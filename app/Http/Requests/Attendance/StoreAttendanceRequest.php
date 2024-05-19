@@ -39,12 +39,12 @@ class StoreAttendanceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'session_code.required' => __('validation.required'),
-            'session_code.exists' => __('validation.exists'),
-            'student_code.required' => __('validation.required'),
-            'student_code.exists' => __('validation.exists'),
-            'present.required' => __('validation.required'),
-            'present.in' => __('validation.in'),
+            'session_code.required' => __('validation.required', ['attribute' => __('attendance.field.session_code')]),
+            'session_code.exists' => __('validation.exists', ['attribute' => __('attendance.field.session_code')]),
+            'student_code.required' => __('validation.required', ['attribute' => __('attendance.field.student_code')]),
+            'student_code.exists' => __('validation.exists', ['attribute' => __('attendance.field.student_code')]),
+            'present.required' => __('validation.required', ['attribute' => __('attendance.field.present')]),
+            'present.in' => __('validation.in', ['attribute' => __('attendance.field.present')]),
         ];
     }
 }

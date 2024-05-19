@@ -25,7 +25,7 @@ class StoreClubSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'session_code' => 'required|string|unique:club_sessions,session_code|max:255',
+            'session_code' => 'required|string|max:255|unique:club_sessions,session_code',
             'session_name' => 'required|string|max:255',
             'schedule_code' => 'required|exists:club_schedules,schedule_code',
             'date' => 'required|date',
@@ -35,10 +35,20 @@ class StoreClubSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'schedule_code.required' => __('validation.required'),
-            'schedule_code.exists' => __('validation.exists'),
-            'date.required' => __('validation.required'),
-            'date.date' => __('validation.date'),
+            'session_code.required' => __('validation.required', ['attribute' => __('club_session.field.session_code')]),
+            'session_code.string' => __('validation.string', ['attribute' => __('club_session.field.session_code')]),
+            'session_code.max' => __('validation.max', ['attribute' => __('club_session.field.session_code')]),
+            'session_code.unique' => __('validation.unique', ['attribute' => __('club_session.field.session_code')]),
+
+            'session_name.required' => __('validation.required', ['attribute' => __('club_session.field.session_name')]),
+            'session_name.string' => __('validation.string', ['attribute' => __('club_session.field.session_name')]),
+            'session_name.max' => __('validation.max', ['attribute' => __('club_session.field.session_name')]),
+
+            'schedule_code.required' => __('validation.required', ['attribute' => __('club_session.field.schedule_code')]),
+            'schedule_code.exists' => __('validation.exists', ['attribute' => __('club_session.field.schedule_code')]),
+
+            'date.required' => __('validation.required', ['attribute' => __('club_session.field.date')]),
+            'date.date' => __('validation.date', ['attribute' => __('club_session.field.date')]),
         ];
     }
 }

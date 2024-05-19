@@ -34,10 +34,12 @@ class StoreClubEnrollmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'student_code.required' => __('validation.required'),
-            'student_code.exists' => __('validation.exists'),
-            'club_code.required' => __('validation.required'),
-            'club_code.exists' => __('validation.exists'),
+            'student_code.required' => __('validation.required', ['attribute' => __('club_enrollment.field.student_code')]),
+            'student_code.exists' => __('validation.exists', ['attribute' => __('club_enrollment.field.student_code')]),
+            'club_code.required' => __('validation.required', ['attribute' => __('club_enrollment.field.club_code')]),
+            'club_code.exists' => __('validation.exists', ['attribute' => __('club_enrollment.field.club_code')]),
+            'from.required' => __('validation.required', ['attribute' => __('club_enrollment_history.field.from')]),
+            'from.date' => __('validation.date', ['attribute' => __('club_enrollment_history.field.from')]),
         ];
     }
 }

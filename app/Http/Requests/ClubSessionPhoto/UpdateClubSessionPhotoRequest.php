@@ -32,10 +32,10 @@ class UpdateClubSessionPhotoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'photo_url.required' => __('validation.required'),
-            'photo_url.image' => __('validation.image'),
-            'photo_url.mimes' => __('validation.mimes'),
-            'photo_url.max' => __('validation.max'),
+            'photo_url.required' => __('validation.required', ['attribute' => __('club_session_photo.field.photo_url')]),
+            'photo_url.image' => __('validation.image', ['attribute' => __('club_session_photo.field.photo_url')]),
+            'photo_url.mimes' => __('validation.mimes', ['attribute' => __('club_session_photo.field.photo_url')]),
+            'photo_url.max' => __('validation.max', ['attribute' => __('club_session_photo.field.photo_url')]),
         ];
     }
 }

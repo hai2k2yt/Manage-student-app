@@ -34,11 +34,17 @@ class StoreStudentClassRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'class_name.required' => __('validation.required'),
-            'class_name.string' => __('validation.string'),
-            'class_name.max' => __('validation.max'),
-            'teacher_code.required' => __('validation.required'),
-            'teacher_code.exists' => __('validation.exists'),
+            'class_code.required' => __('validation.required', ['attribute' => __('student_class.field.class_code')]),
+            'class_code.string' => __('validation.string', ['attribute' => __('student_class.field.class_code')]),
+            'class_code.max' => __('validation.max', ['attribute' => __('student_class.field.class_code')]),
+            'class_code.unique' => __('validation.unique', ['attribute' => __('student_class.field.class_code')]),
+
+            'class_name.required' => __('validation.required', ['attribute' => __('student_class.field.class_name')]),
+            'class_name.string' => __('validation.string', ['attribute' => __('student_class.field.class_name')]),
+            'class_name.max' => __('validation.max', ['attribute' => __('student_class.field.class_name')]),
+
+            'teacher_code.required' => __('validation.required', ['attribute' => __('student_class.field.teacher_code')]),
+            'teacher_code.exists' => __('validation.exists', ['attribute' => __('student_class.field.teacher_code')]),
         ];
     }
 }
