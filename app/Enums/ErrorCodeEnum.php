@@ -72,9 +72,14 @@ enum ErrorCodeEnum: string
     case TeacherShow = 'E-110';
     case UserRegister = 'E-120';
     case UserShow = 'E-121';
+    case UserUpdate = 'E-122';
+    case UserDelete = 'E-123';
+
     case AuthUpdateProfile = 'E-130';
 
 
     case StatisticStudentFee = 'E-140';
     case StatisticTeacherFee = 'E-141';
+
+
 }

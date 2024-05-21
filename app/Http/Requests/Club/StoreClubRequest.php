@@ -25,7 +25,7 @@ class StoreClubRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'club_code' => 'required|string|max:255',
+            'club_code' => 'required|string|max:255|unique:clubs,club_code',
             'name' => 'required|string|max:255',
             'teacher_code' => 'required|exists:teachers,teacher_code'
         ];
@@ -37,6 +37,7 @@ class StoreClubRequest extends FormRequest
             'club_code.required' => __('validation.required', ['attribute' => __('club.field.club_code')]),
             'club_code.string' => __('validation.string', ['attribute' => __('club.field.club_code')]),
             'club_code.max' => __('validation.max', ['attribute' => __('club.field.club_code')]),
+            'club_code.unique' => __('validation.unique', ['attribute' => __('club.field.club_code')]),
             'name.required' => __('validation.required', ['attribute' => __('club.field.name')]),
             'name.string' => __('validation.string', ['attribute' => __('club.field.name')]),
             'name.max' => __('validation.max', ['attribute' => __('club.field.name')]),

@@ -127,7 +127,7 @@ class ClubEnrollmentController extends Controller
                 );
             }
             $currentEnrollments->update([
-               'status' => ClubEnrollmentStatusEnum::STUDY->value
+                'status' => ClubEnrollmentStatusEnum::STUDY->value
             ]);
             //Absence
             $enrollment_history =
@@ -156,14 +156,15 @@ class ClubEnrollmentController extends Controller
         }
     }
 
-    public function cancelEnrollment(CancelClubEnrollmentRequest $request, string $id) {
+    public function cancelEnrollment(CancelClubEnrollmentRequest $request, string $id): JsonResponse
+    {
         DB::beginTransaction();
         try {
             $requestData = $request->validated();
-            $to = $requestData['to'] ?? date('Y-d-m');
+            $to = $requestData['to'] ?? date('Y-m-d');
             $club_enrollment_id = $id;
             $club_enrollment = $this->clubEnrollmentRepository->find($club_enrollment_id);
-            if(!$club_enrollment) {
+            if (!$club_enrollment) {
                 return $this->sendError(
                     null,
                     ErrorCodeEnum::ClubEnrollmentCancel,
@@ -179,7 +180,7 @@ class ClubEnrollmentController extends Controller
                     ['auth' => __('auth.forbidden')]
                 );
             }
-            if($club_enrollment->status == ClubEnrollmentStatusEnum::ABSENCE) {
+            if ($club_enrollment->status == ClubEnrollmentStatusEnum::ABSENCE) {
                 return $this->sendError(
                     null,
                     ErrorCodeEnum::ClubEnrollmentCancel,
@@ -189,15 +190,24 @@ class ClubEnrollmentController extends Controller
             }
             $enrollment_histories_check = ClubEnrollmentHistory
                 ::where('club_enrollment_id', $club_enrollment_id)
-                ->where('from', '<=', $to)
-                ->where('to', '>=', $to)
-                ->where('status', ClubEnrollmentStatusEnum::ABSENCE)->count();
-            if($enrollment_histories_check) {
+                ->where(static function ($query) use ($to) {
+                    $query->where(static function ($query2) use ($to) {
+                        $query2
+                            ->where('from', '<=', $to)
+                            ->where('to', '>=', $to)
+                            ->where('status', ClubEnrollmentStatusEnum::ABSENCE);
+                    })->orWhere(static function ($query3) use ($to) {
+                        $query3
+                            ->where('from', '>=', $to)
+                            ->where('status', ClubEnrollmentStatusEnum::STUDY);
+                    });
+                })->count();
+            if ($enrollment_histories_check) {
                 return $this->sendError(
                     null,
                     ErrorCodeEnum::ClubEnrollmentCancel,
                     Response::HTTP_INTERNAL_SERVER_ERROR,
-                    ['club_enrollment' => __('enrollment.error.to_not_valid')]
+                    ['club_enrollment' => __('club_enrollment.error.to_not_valid')]
                 );
             }
 

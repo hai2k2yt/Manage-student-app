@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Http\Requests\ClubEnrollment;
+namespace App\Http\Requests\User;
 
+use App\Enums\AbsenceReportEnum;
+use App\Enums\RoleEnum;
 use App\Traits\ApiFailedValidation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CancelClubEnrollmentRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     use ApiFailedValidation;
     /**
@@ -25,14 +28,20 @@ class CancelClubEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'to' => 'nullable|date_format:Y-m-d'
+            'name' => 'nullable|string|max:255',
+            'role' => [
+                'nullable',
+                Rule::in(RoleEnum::values())
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'to.date_format' => __('validation.date_format', ['attribute' => __('club_enrollment_history.field.to')]),
+            'name.string' => __('validation.string', ['attribute' => __('user.field.name')]),
+            'name.max' => __('validation.max', ['attribute' => __('user.field.name')]),
+            'role.in' => __('validation.in', ['attribute' => __('user.field.role')]),
         ];
     }
 }

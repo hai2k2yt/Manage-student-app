@@ -51,6 +51,7 @@ Route::middleware('api')->group(function () {
             Route::get('/all', [UserController::class, 'all'])->name('all');
             Route::get('', [UserController::class, 'index'])->name('index');
             Route::get('{id}', [UserController::class, 'show'])->name('show');
+            Route::post('{id}', [UserController::class, 'update'])->name('update');
         });
 
         Route::prefix('student')->group(function () {
