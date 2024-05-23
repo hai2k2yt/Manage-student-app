@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('schedule_code')->references('schedule_code')->on('club_schedules');
+            $table->foreign('schedule_code')->references('schedule_code')->on('club_schedules')->cascadeOnDelete();
         });
     }
 

@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('schedule_code')->unique();
             $table->string('club_code');
-            $table->string('teacher_code');
+            $table->string('teacher_code')->nullable();
             $table->string('schedule_name');
             $table->string('day_of_week');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('club_code')->references('club_code')->on('clubs');
-            $table->foreign('teacher_code')->references('teacher_code')->on('teachers');
+            $table->foreign('club_code')->references('club_code')->on('clubs')->cascadeOnDelete();
+            $table->foreign('teacher_code')->references('teacher_code')->on('teachers')->nullOnDelete();
         });
     }
 

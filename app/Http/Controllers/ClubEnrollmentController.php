@@ -132,8 +132,8 @@ class ClubEnrollmentController extends Controller
             //Absence
             $enrollment_history =
                 ClubEnrollmentHistory::where('club_enrollment_id', $currentEnrollments->id)
-                    ->where('from', '>=', date($from))
-                    ->where('to', '<=', date($from))
+                    ->where('from', '<=', $from)
+                    ->where('to', '>=', $from)
                     ->get();
             if ($enrollment_history->count() > 0) {
                 return $this->sendError(

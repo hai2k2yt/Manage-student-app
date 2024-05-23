@@ -30,6 +30,8 @@ class StoreClubScheduleRequest extends FormRequest
             'club_code' => 'required|exists:clubs,club_code',
             'teacher_code' => 'required|exists:teachers,teacher_code',
             'day_of_week' => 'required|in:1,2,3,4,5,6,7',
+            'student_fee' => 'required|numeric|gt:0',
+            'teacher_fee' => 'required|numeric|gt:0',
         ];
     }
 
@@ -53,6 +55,14 @@ class StoreClubScheduleRequest extends FormRequest
 
             'day_of_week.required' => __('validation.required', ['attribute' => __('club_schedule.field.day_of_week')]),
             'day_of_week.in' => __('validation.in', ['attribute' => __('club_schedule.field.day_of_week')]),
+
+            'student_fee.required' => __('validation.required', ['attribute' => __('club_schedule_fee.field.student_fee')]),
+            'student_fee.numeric' => __('validation.numeric', ['attribute' => __('club_schedule_fee.field.student_fee')]),
+            'student_fee.gt' => __('validation.gt', ['attribute' => __('club_schedule_fee.field.student_fee')]),
+
+            'teacher_fee.required' => __('validation.required', ['attribute' => __('club_schedule_fee.field.teacher_fee')]),
+            'teacher_fee.numeric' => __('validation.numeric', ['attribute' => __('club_schedule_fee.field.teacher_fee')]),
+            'teacher_fee.gt' => __('validation.gt', ['attribute' => __('club_schedule_fee.field.teacher_fee')]),
         ];
     }
 }

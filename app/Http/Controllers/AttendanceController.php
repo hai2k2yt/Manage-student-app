@@ -76,7 +76,7 @@ class AttendanceController extends Controller
                     ['student' => __('student.error.not_in_club')]
                 );
             }
-            $attendance_student_codes = $club_session->attendance->pluck('student_code')->toArray();
+            $attendance_student_codes = $club_session->attendances->pluck('student_code')->toArray();
             if (in_array($student_code, $attendance_student_codes)) {
                 return $this->sendError(
                     null,

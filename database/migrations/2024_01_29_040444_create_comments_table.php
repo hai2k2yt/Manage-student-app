@@ -19,8 +19,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('session_code')->references('session_code')->on('club_sessions');
-            $table->foreign('student_code')->references('student_code')->on('students');
+            $table->foreign('session_code')->references('session_code')->on('club_sessions')->cascadeOnDelete();
+            $table->foreign('student_code')->references('student_code')->on('students')->cascadeOnDelete();
         });
     }
 

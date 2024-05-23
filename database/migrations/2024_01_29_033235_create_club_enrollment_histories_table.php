@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('status');
             $table->timestamps();
 
-            $table->foreign('club_enrollment_id')->references('id')->on('club_enrollments')->nullOnDelete();
+            $table->foreign('club_enrollment_id')->references('id')->on('club_enrollments')->cascadeOnDelete();
 
         });
     }

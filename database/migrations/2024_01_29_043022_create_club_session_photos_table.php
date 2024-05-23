@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('photo_url');
             $table->timestamps();
 
-            $table->foreign('session_code')->references('session_code')->on('club_sessions');
+            $table->foreign('session_code')->references('session_code')->on('club_sessions')->cascadeOnDelete();
         });
     }
 

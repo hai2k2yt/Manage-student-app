@@ -17,7 +17,7 @@ class StudentSeeder extends Seeder
     public function run(): void
     {
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             Student::create([
                 'student_code' => 'STUDENT_' . ($i + 1),
                 'name' => fake('vi_VN')->name(),

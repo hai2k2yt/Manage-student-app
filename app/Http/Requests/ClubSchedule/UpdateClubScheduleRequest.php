@@ -26,9 +26,10 @@ class UpdateClubScheduleRequest extends FormRequest
     {
         return [
             'schedule_name' => 'nullable|string|max:255',
-            'club_code' => 'nullable|exists:clubs,club_code',
             'teacher_code' => 'nullable|exists:teachers,teacher_code',
             'day_of_week' => 'nullable|in:1,2,3,4,5,6,7',
+            'student_fee' => 'nullable|numeric|gt:0',
+            'teacher_fee' => 'nullable|numeric|gt:0',
         ];
     }
 
@@ -38,11 +39,15 @@ class UpdateClubScheduleRequest extends FormRequest
             'schedule_name.string' => __('validation.exists', ['attribute' => __('club_schedule.field.schedule_name')]),
             'schedule_name.max' => __('validation.exists', ['attribute' => __('club_schedule.field.schedule_name')]),
 
-            'club_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.club_code')]),
-
             'teacher_code.exists' => __('validation.exists', ['attribute' => __('club_schedule.field.teacher_code')]),
 
             'day_of_week.in' => __('validation.in', ['attribute' => __('club_schedule.field.day_of_week')]),
+
+            'student_fee.numeric' => __('validation.numeric', ['attribute' => __('club_schedule_fee.field.student_fee')]),
+            'student_fee.gt' => __('validation.gt', ['attribute' => __('club_schedule_fee.field.student_fee')]),
+
+            'teacher_fee.numeric' => __('validation.numeric', ['attribute' => __('club_schedule_fee.field.teacher_fee')]),
+            'teacher_fee.gt' => __('validation.gt', ['attribute' => __('club_schedule_fee.field.teacher_fee')]),
         ];
     }
 }

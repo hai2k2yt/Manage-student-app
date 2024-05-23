@@ -70,7 +70,11 @@ class StatisticController extends Controller
                 $enrollment_histories = $enrollment->enrollment_histories;
                 $schedules = $club->schedules;
                 foreach ($schedules as $schedule) {
-                    $schedule_fee = ClubScheduleFee::where('schedule_code', $schedule->schedule_code)->first()->student_fee;
+                    $schedule_fee = 0;
+                    $get_fee = ClubScheduleFee::where('schedule_code', $schedule->schedule_code)->first();
+                    if($get_fee) {
+                        $schedule_fee = $get_fee->student_fee;
+                    }
                     $sessions = $schedule->sessions;
                     $filtered_sessions = $sessions->filter(function ($item) use ($to, $from, $enrollment_histories) {
                         $sessionDate = strtotime($item->date);
@@ -116,7 +120,11 @@ class StatisticController extends Controller
             $schedules = $club->schedules;
             foreach ($schedules as $schedule) {
                 $teacher = $schedule->teacher;
-                $schedule_fee = ClubScheduleFee::where('schedule_code', $schedule->schedule_code)->first()->teacher_fee;
+                $schedule_fee = 0;
+                $get_fee = ClubScheduleFee::where('schedule_code', $schedule->schedule_code)->first();
+                if($get_fee) {
+                    $schedule_fee = $get_fee->teacher_fee;
+                }
                 $sessions = $schedule->sessions;
                 $filtered_sessions = $sessions->filter(function ($item) use ($to, $from) {
                     $sessionDate = strtotime($item->date);
