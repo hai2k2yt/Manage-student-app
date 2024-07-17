@@ -35,6 +35,6 @@ class AttendanceRepository extends BaseRepository
         $schedule_codes = ClubSchedule::where('club_code', $club_code)->pluck('schedule_code')->toArray();
 
         $session_codes = ClubSession::whereIn('schedule_code', $schedule_codes)->pluck('session_code')->toArray();
-        return $this->getAllByConditions(['session_code' => $session_codes, 'student_code' => $student_code]);
+        return $this->getAllByConditions(['session_code' => $session_codes, 'student_code' => $student_code], ['session']);
     }
 }

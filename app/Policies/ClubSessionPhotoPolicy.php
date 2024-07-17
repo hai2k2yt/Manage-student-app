@@ -42,11 +42,7 @@ class ClubSessionPhotoPolicy
     public function update(User $user, ClubSessionPhoto $clubSessionPhoto): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value) {
-            $teacher = Teacher::where('user_id', $user->id);
-            if (!$teacher) return false;
-            if ($teacher->teacher_code == $clubSessionPhoto->session->teacher_code) return true;
-        }
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 

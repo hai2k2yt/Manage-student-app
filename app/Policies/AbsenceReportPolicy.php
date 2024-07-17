@@ -7,13 +7,16 @@ use App\Models\AbsenceReport;
 use App\Models\ClubSession;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Repositories\TeacherRepository;
 
 class AbsenceReportPolicy
 {
     /**
      * Create a new policy instance.
      */
-    public function __construct()
+    public function __construct(
+        protected TeacherRepository $teacherRepository
+    )
     {
         //
     }
@@ -44,9 +47,9 @@ class AbsenceReportPolicy
         if ($user->role == RoleEnum::ADMIN->value) return true;
         if ($user->role == RoleEnum::PARENT->value) return true;
         if ($user->role == RoleEnum::TEACHER->value) {
-            $teacher = Teacher::where('user_id', $user->id);
+            $teacher = $this->teacherRepository->getTeacherByUserID($user->id);
             if (!$teacher) return false;
-            if ($teacher->teacher_code == $absenceReport->session->teacher_code) return true;
+            if ($teacher->teacher_code == $absenceReport->session->schedule->teacher->teacher_code) return true;
         }
         return false;
     }
@@ -61,11 +64,7 @@ class AbsenceReportPolicy
     public function destroy(User $user, AbsenceReport $absenceReport): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value) {
-            $teacher = Teacher::where('user_id', $user->id);
-            if (!$teacher) return false;
-            if ($teacher->teacher_code == $absenceReport->session->teacher_code) return true;
-        }
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 }

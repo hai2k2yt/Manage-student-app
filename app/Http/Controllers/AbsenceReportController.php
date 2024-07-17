@@ -79,8 +79,8 @@ class AbsenceReportController extends Controller
                 return $this->sendError(
                     null,
                     ErrorCodeEnum::AbsenceReportStore,
-                    Response::HTTP_FORBIDDEN,
-                    ['absence_report' => __('absence_report.existed')]
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    ['absence_report' => __('absence_report.error.existed')]
                 );
             }
             if ($request->user()->cannot('store', AbsenceReport::class)) {
@@ -139,17 +139,6 @@ class AbsenceReportController extends Controller
                     Response::HTTP_FORBIDDEN,
                     ['auth' => __('auth.forbidden')]
                 );
-            }
-            if ($request->user()->role == RoleEnum::TEACHER->value) {
-                $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
-                if (!$requestTeacher || $absenceReport->session->schedule->teacher_code != $requestTeacher->teacher_code) {
-                    return $this->sendError(
-                        null,
-                        ErrorCodeEnum::AbsenceReportUpdate,
-                        Response::HTTP_FORBIDDEN,
-                        ['auth' => __('auth.forbidden')]
-                    );
-                }
             }
 
             $absenceReport = $this->absenceReportRepository->update($id, $requestData);
@@ -218,7 +207,7 @@ class AbsenceReportController extends Controller
         return $this->sendResponse($absenceReports);
     }
 
-    public function getClubStudent(Request $request)
+    public function getClubStudent(Request $request): JsonResponse
     {
         $res = $request->all();
         $student_code = $res['student_code'];

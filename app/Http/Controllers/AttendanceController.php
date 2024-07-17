@@ -285,7 +285,7 @@ class AttendanceController extends Controller
             }
             if ($request->user()->role == RoleEnum::TEACHER->value) {
                 $requestTeacher = $this->teacherRepository->getTeacherByUserID($request->user()->id);
-                if (!$requestTeacher || $attendance->session->schedule->teacher_id != $requestTeacher->teacher_code)
+                if (!$requestTeacher || $attendance->session->schedule->teacher_code != $requestTeacher->teacher_code)
                     return $this->sendError(
                         null,
                         ErrorCodeEnum::AttendanceDelete,

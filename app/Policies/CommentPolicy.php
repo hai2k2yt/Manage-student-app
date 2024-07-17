@@ -41,11 +41,7 @@ class CommentPolicy
     public function update(User $user, Comment $comment): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value) {
-            $teacher = Teacher::where('user_id', $user->id);
-            if (!$teacher) return false;
-            if ($teacher->teacher_code == $comment->session->teacher_code) return true;
-        }
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 
@@ -59,11 +55,7 @@ class CommentPolicy
     public function destroy(User $user, Comment $comment): bool
     {
         if ($user->role == RoleEnum::ADMIN->value) return true;
-        if ($user->role == RoleEnum::TEACHER->value) {
-            $teacher = Teacher::where('user_id', $user->id);
-            if (!$teacher) return false;
-            if ($teacher->teacher_code == $comment->session->teacher_code) return true;
-        }
+        if ($user->role == RoleEnum::TEACHER->value) return true;
         return false;
     }
 }
